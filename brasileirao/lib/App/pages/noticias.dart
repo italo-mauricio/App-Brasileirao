@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:brasileirao/App/assets/imagens.dart';
 
 
 TextStyle _FontHeader = const TextStyle(
@@ -15,19 +16,19 @@ TextStyle _FontNormalText = GoogleFonts.openSans(
   color: Colors.black,
 );
 
-Widget tabela_seria_A() {
+Widget noticias() {
   return SingleChildScrollView(
     child: Container(
     padding: const EdgeInsets.all(
         16.0), // Adiciona um padding de 16.0 em todas as direções
     child: Column(
       children: <Widget>[
-        FadeInImage(
-          placeholder:
-              NetworkImage('https://pbs.twimg.com/media/Fs0BPfGWwAI39Pi.png'),
-         // image: imageBarcaLogo,
-          height: 300, // Altura da imagem em pixels
-        ),
+     const FadeInImage(
+            placeholder:
+                NetworkImage('https://pbs.twimg.com/media/Fs0BPfGWwAI39Pi.png'),
+            image: imageBrasileiraoLogo,
+            height: 300, // Altura da imagem em pixels
+          ),
         const SizedBox(height: 16.0),
         Text(
           'Em 1899, Joan Gamper, um suíço, decidiu introduzir o futebol em Barcelona, montando um time. O clube foi oficialmente fundado no dia 29 de novembro de 1899.',
