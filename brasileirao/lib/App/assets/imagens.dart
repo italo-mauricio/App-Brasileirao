@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 const imageBrasileiraoLogo = NetworkImage(
-    'https://www.google.com/url?sa=i&url=https%3A%2F%2Fpt.wikipedia.org%2Fwiki%2FCampeonato_Brasileiro_de_Futebol_de_2022_-_S%25C3%25A9rie_A&psig=AOvVaw1mHdA21KTHaBhF4OxyNBKF&ust=1684681419379000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCIiTy8GVhP8CFQAAAAAdAAAAABAX');
+    'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.terra.com.br%2Fesportes%2Ffutebol%2Fbrasileiro-serie-a%2Fbrasileirao-2023-veja-os-dias-e-horarios-dos-jogos-da-primeira-rodada%2C00a2ed4b32256110121bcc65c437b2777m3qpwjf.html&psig=AOvVaw1mHdA21KTHaBhF4OxyNBKF&ust=1684681419379000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCIiTy8GVhP8CFQAAAAAdAAAAABAf');
 
 const imageMessi = NetworkImage(
     'https://i.eurosport.com/2015/06/07/1608439-34166200-2560-1440.jpg');
