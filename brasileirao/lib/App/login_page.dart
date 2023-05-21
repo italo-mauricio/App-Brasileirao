@@ -40,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               width: 200,
               height: 200,
-              child: Image.asset('assets/images/barca4.png'),
+              child: Image.asset('assets/images/logo_login.png'),
             ),
             Container(
               height: 20,
@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
         SizedBox(
             height: MediaQuery.of(context).size.height,
             child: Image.asset(
-              'assets/images/campnou11.jpg',
+              'assets/images/logo_tras.jpeg',
               fit: BoxFit.cover,
             )),
         Container(color: Colors.black.withOpacity(0.3)),
