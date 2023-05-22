@@ -66,7 +66,7 @@ class _MyAppState extends State<MyApp> {
               UserAccountsDrawerHeader(
                 currentAccountPicture: ClipRRect(
                   borderRadius: BorderRadius.circular(40),
-                  child: Image.network('https://www.google.com/url?sa=i&url=https%3A%2F%2Fpt.vecteezy.com%2Farte-vetorial%2F2387693-icone-do-perfil-do-usuario&psig=AOvVaw0E78JoqejATrrYR5C0HWPr&ust=1684632317186000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCLjh-sregv8CFQAAAAAdAAAAABAD')),
+                  child: Image.network('https://w7.pngwing.com/pngs/659/667/png-transparent-computer-icons-user-profile-blog-others-miscellaneous-rectangle-logo.png')),
                 accountName: const Text('Usuário'), accountEmail: const Text('usuariobrasileirao@gmail.com')),
             ],
           ),
