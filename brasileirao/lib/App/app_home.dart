@@ -108,19 +108,19 @@ class _MyAppState extends State<MyApp> {
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
-                label: "Inicial",
+                label: "Notícias",
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.grade),
-                label: "Lionel Messi",
+                label: "Série A",
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
-                label: "Camp Nou",
+                label: "Série B",
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.emoji_events),
-                label: "Títulos",
+                label: "Série C",
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.account_box),
