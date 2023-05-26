@@ -108,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 15),
                       Text(
                         errorMessage,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.red,
                           fontSize: 14.0,
                         ),
