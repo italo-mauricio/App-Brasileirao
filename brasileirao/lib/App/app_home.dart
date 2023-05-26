@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner:
           false, // desabilitando o "debug" no canto da tela
-      theme: ThemeData(colorScheme: const ColorScheme.light()),
+      theme: ThemeData(colorScheme: const ColorScheme.light(primary: Color.fromARGB(255, 4, 194, 178))),
       home: Scaffold(
            drawer: Drawer(
         child: Column(children: [
@@ -91,8 +91,8 @@ class _MyAppState extends State<MyApp> {
         ]),
       ),
         appBar: AppBar(
-          backgroundColor: Colors.blueAccent,
-          title: Text("Barcelona Futebol Clube", style: _FontHeader),
+          backgroundColor: const Color.fromARGB(255, 149, 250, 99),
+          title: Text("Max Fut", style: _FontHeader),
           centerTitle: true,
         ),
         body: IndexedStack(
@@ -100,11 +100,11 @@ class _MyAppState extends State<MyApp> {
           children: _pages,
         ),
         bottomNavigationBar: Theme(
-          data: ThemeData(canvasColor: Colors.redAccent),
+          data: ThemeData(canvasColor:  const Color.fromARGB(255, 4, 194, 178)),
           child: BottomNavigationBar(
             currentIndex: _Index,
-            selectedItemColor: Colors.blue,
-            unselectedItemColor: Colors.amber,
+            selectedItemColor: const Color.fromARGB(255, 210, 254, 88),
+            unselectedItemColor: const Color.fromARGB(255, 17, 253, 233),
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
