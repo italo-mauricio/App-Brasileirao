@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> {
         ]),
       ),
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 149, 250, 99),
+          backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
           title: Text("Max Fut", style: _FontHeader),
           centerTitle: true,
         ),
@@ -100,11 +100,11 @@ class _MyAppState extends State<MyApp> {
           children: _pages,
         ),
         bottomNavigationBar: Theme(
-          data: ThemeData(canvasColor:  const Color.fromARGB(255, 4, 194, 178)),
+          data: ThemeData(canvasColor:  const Color.fromRGBO(35, 131, 51, 1.0)),
           child: BottomNavigationBar(
             currentIndex: _Index,
-            selectedItemColor: const Color.fromARGB(255, 210, 254, 88),
-            unselectedItemColor: const Color.fromARGB(255, 17, 253, 233),
+            selectedItemColor: const Color.fromRGBO(252, 193, 79, 1.0),
+            unselectedItemColor: const Color.fromARGB(248, 248, 248, 248),
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
