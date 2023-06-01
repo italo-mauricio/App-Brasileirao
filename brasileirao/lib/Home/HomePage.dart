@@ -4,31 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math' as math;
-import 'pages/divisoes/serie_A.dart';
-import 'pages/divisoes/serie_B.dart';
-import 'pages/divisoes/serie_C.dart';
-import 'pages/noticias.dart';
-import 'pages/perfil.dart';
+import 'package:brasileirao/assets/Fontes.dart';
 
-
-//void Atividade1() {
- // runApp(MyApp());
-//}
-
-// fontes para usar no resto do código
-TextStyle _FontHeader = GoogleFonts.openSans(
-  fontSize: 30,
-  fontWeight: FontWeight.bold,
-  fontStyle: FontStyle.normal,
-  color: Colors.black,
-);
-
-TextStyle _FontNormalText = GoogleFonts.openSans(
-  fontSize: 20,
-  fontWeight: FontWeight.normal,
-  fontStyle: FontStyle.normal,
-  color: Colors.black,
-);
 
 class MyApp extends StatefulWidget {
   @override
@@ -38,11 +15,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _Index = 0;
   final List<Widget> _pages = [
-    Center(child: noticias()),
-    Center(child: tabela_seria_A()),
-    Center(child: tabela_seria_B()),
-    Center(child: tabela_seria_C()),
-    Center(child: meu_perfil()),
   ];
 
   void _onItemTapped(int index) {
@@ -91,8 +63,8 @@ class _MyAppState extends State<MyApp> {
         ]),
       ),
         appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
-          title: Text("Max Fut", style: _FontHeader),
+          backgroundColor: const Color.fromARGB(255, 149, 250, 99),
+          title: Text("Max Fut", style: Fontes().FontHeader()),
           centerTitle: true,
         ),
         body: IndexedStack(
@@ -100,11 +72,11 @@ class _MyAppState extends State<MyApp> {
           children: _pages,
         ),
         bottomNavigationBar: Theme(
-          data: ThemeData(canvasColor:  const Color.fromRGBO(35, 131, 51, 1.0)),
+          data: ThemeData(canvasColor:  const Color.fromARGB(255, 4, 194, 178)),
           child: BottomNavigationBar(
             currentIndex: _Index,
-            selectedItemColor: const Color.fromRGBO(252, 193, 79, 1.0),
-            unselectedItemColor: const Color.fromARGB(248, 248, 248, 248),
+            selectedItemColor: const Color.fromARGB(255, 210, 254, 88),
+            unselectedItemColor: const Color.fromARGB(255, 17, 253, 233),
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
