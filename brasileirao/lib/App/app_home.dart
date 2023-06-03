@@ -1,136 +1,83 @@
-import 'package:flutter/foundation.dart';
-
-
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'dart:math' as math;
-import 'pages/divisoes/serie_A.dart';
-import 'pages/divisoes/serie_B.dart';
-import 'pages/divisoes/serie_C.dart';
-import 'pages/noticias.dart';
-import 'pages/perfil.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import '../App/utils/Controller.dart';
+import 'sections/DataTable.dart';
 
+var dataService = DataService();
 
-//void Atividade1() {
- // runApp(MyApp());
-//}
-
-// fontes para usar no resto do código
-TextStyle _FontHeader = GoogleFonts.openSans(
-  fontSize: 30,
-  fontWeight: FontWeight.bold,
-  fontStyle: FontStyle.normal,
-  color: Colors.black,
-);
-
-TextStyle _FontNormalText = GoogleFonts.openSans(
-  fontSize: 20,
-  fontWeight: FontWeight.normal,
-  fontStyle: FontStyle.normal,
-  color: Colors.black,
-);
-
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  int _Index = 0;
-  final List<Widget> _pages = [
-    Center(child: noticias()),
-    Center(child: tabela_seria_A()),
-    Center(child: tabela_seria_B()),
-    Center(child: tabela_seria_C()),
-    Center(child: meu_perfil()),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _Index = index;
-    });
-  }
-
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner:
-          false, // desabilitando o "debug" no canto da tela
-      theme: ThemeData(colorScheme: const ColorScheme.light(primary: Color.fromARGB(255, 4, 194, 178))),
       home: Scaffold(
-           drawer: Drawer(
-        child: Column(children: [
-          Column(
-            children: [
-              UserAccountsDrawerHeader(
-                currentAccountPicture: ClipRRect(
-                  borderRadius: BorderRadius.circular(40),
-                  child: Image.asset('assets/images/logo_usuario.jpg')),
-                accountName: const Text('Usuário'), accountEmail: const Text('usuariobrasileirao@gmail.com')),
-            ],
-          ),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Inicio'),
-            subtitle: const Text('Tela de Inicio'),
-            onTap: () {
-              if (kDebugMode) {
-                print('home');
-              }
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.exit_to_app),
-            title: const Text('Logout'),
-            subtitle: const Text('Finalizar sessão'),
-            onTap: () {
-              Navigator.of(context).pushReplacementNamed('/');
-            },
-          )
-        ]),
-      ),
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 149, 250, 99),
-          title: Text("Max Fut", style: _FontHeader),
-          centerTitle: true,
+          title: const Text("data"),
         ),
-        body: IndexedStack(
-          index: _Index,
-          children: _pages,
-        ),
-        bottomNavigationBar: Theme(
-          data: ThemeData(canvasColor:  const Color.fromARGB(255, 4, 194, 178)),
-          child: BottomNavigationBar(
-            currentIndex: _Index,
-            selectedItemColor: const Color.fromARGB(255, 210, 254, 88),
-            unselectedItemColor: const Color.fromARGB(255, 17, 253, 233),
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: "Notícias",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.grade),
-                label: "Série A",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: "Série B",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.emoji_events),
-                label: "Série C",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.account_box),
-                label: "Perfil",
-              ),
-            ],
-            onTap: _onItemTapped,
-          ),
-        ),
+        body: const MyBody(),
+        bottomNavigationBar:
+            MyBottomNav(itemSelectedCallback: dataService.chamarApi),
       ),
     );
+  }
+}
+
+class MyBody extends StatelessWidget {
+  const MyBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return ValueListenableBuilder(
+        valueListenable: dataService.tableStateNotifier,
+        builder: (_, value, __) {
+          switch (value['status']) {
+            case TableStatus.idle:
+              return const Center(child: Text("Clique em algo para continuar"),);
+            case TableStatus.loading:
+              return const Center(child: CircularProgressIndicator());
+            case TableStatus.readyMatches:
+                  return DataTableWidget(
+                    jsonObjects: value['dataObjects'],
+                    columnNames: dataService.columnsNamesNotifier.value,
+                    propertyNames: dataService.propetyNamesNotifier.value,
+                  );
+            case TableStatus.error:
+              return const Center(
+                  child: Text("Aconteceu um imprevisto, chame o DevOps"));
+          }
+          return const Text("...");
+        });
+  }
+}
+
+class MyBottomNav extends HookWidget {
+  final _itemSelectedCallback;
+
+  MyBottomNav({itemSelectedCallback})
+      : _itemSelectedCallback = itemSelectedCallback ?? (int);
+
+  @override
+  Widget build(BuildContext context) {
+    var state = useState(1);
+
+    return BottomNavigationBar(
+        onTap: (index) {
+          state.value = index;
+
+          _itemSelectedCallback(index);
+        },
+        currentIndex: state.value,
+        items: const [
+          BottomNavigationBarItem(
+            label: "Cafés",
+            icon: Icon(Icons.coffee_outlined),
+          ),
+          BottomNavigationBarItem(
+              label: "Cervejas", icon: Icon(Icons.local_drink_outlined)),
+          BottomNavigationBarItem(
+              label: "Nações", icon: Icon(Icons.flag_outlined))
+        ]);
   }
 }
