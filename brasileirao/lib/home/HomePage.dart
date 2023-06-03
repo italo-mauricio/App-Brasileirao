@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("data"),
+          title: const Text("Max Fut"),
         ),
         body: const MyBody(),
         drawer: DrawerApp(logoutCallback: logoutCallback),
