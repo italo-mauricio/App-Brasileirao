@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DrawerApp extends StatelessWidget {
-  const DrawerApp({required Key key}) : super(key: key);
+  final VoidCallback logoutCallback;
+
+  const DrawerApp({required this.logoutCallback, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,7 @@ class DrawerApp extends StatelessWidget {
               UserAccountsDrawerHeader(
                 currentAccountPicture: ClipRRect(
                   borderRadius: BorderRadius.circular(40),
-                  child: Image.asset('assets/logo.png'),
+                  child: Image.asset('lib/assets/logo.png'),
                 ),
                 accountName: const Text('Usuário'),
                 accountEmail: const Text('usuariobrasileirao@gmail.com'),
@@ -25,20 +27,14 @@ class DrawerApp extends StatelessWidget {
             title: const Text('Início'),
             subtitle: const Text('Tela de Início'),
             onTap: () {
-              // Ação quando o item é selecionado
-              Navigator.pop(context); // Fechar o drawer
-              // Adicione o código que deseja executar ao selecionar o item
+              Navigator.pop(context);
             },
           ),
           ListTile(
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
             subtitle: const Text('Finalizar sessão'),
-            onTap: () {
-              // Ação quando o item é selecionado
-              Navigator.of(context).pushReplacementNamed('/');
-              // Adicione o código que deseja executar ao selecionar o item
-            },
+            onTap: logoutCallback, // Chama o callback de logout
           ),
         ],
       ),

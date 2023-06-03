@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import '../components/Drawer.dart';
 import '../utils/Controller.dart';
 import 'package:brasileirao/sections/DataTable.dart';
 
 var dataService = DataService();
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final VoidCallback logoutCallback;
+  const MyApp({Key? key, required this.logoutCallback}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: const Text("data"),
         ),
         body: const MyBody(),
+        drawer: DrawerApp(logoutCallback: logoutCallback),
         bottomNavigationBar:
             MyBottomNav(itemSelectedCallback: dataService.chamarApi),
       ),
