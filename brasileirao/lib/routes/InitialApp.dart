@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../Login/LoginPage.dart';
-import '../Home/HomePage.dart';
+import '../login/LoginPage.dart';
+import '../home/HomePage.dart';
 
 
 
