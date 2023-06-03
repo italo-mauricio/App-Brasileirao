@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import '../components/Drawer.dart';
 import '../utils/Controller.dart';
 import 'package:brasileirao/sections/DataTable.dart';
+import 'package:brasileirao/assets/Fontes.dart';
 
 var dataService = DataService();
 
@@ -12,12 +13,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text("Max Fut"),
+          title: Center(
+            child: Text(
+              "Brasileirão Max",
+              style: Fontes().FontHeader(),
+            ),
+          ),
         ),
         body: const MyBody(),
         drawer: DrawerApp(logoutCallback: logoutCallback),
@@ -39,15 +44,17 @@ class MyBody extends StatelessWidget {
         builder: (_, value, __) {
           switch (value['status']) {
             case TableStatus.idle:
-              return const Center(child: Text("Clique em algo para continuar"),);
+              return const Center(
+                child: Text("Clique em algo para continuar"),
+              );
             case TableStatus.loading:
               return const Center(child: CircularProgressIndicator());
             case TableStatus.readyMatches:
-                  return DataTableWidget(
-                    jsonObjects: value['dataObjects'],
-                    columnNames: dataService.columnsNamesNotifier.value,
-                    propertyNames: dataService.propetyNamesNotifier.value,
-                  );
+              return DataTableWidget(
+                jsonObjects: value['dataObjects'],
+                columnNames: dataService.columnsNamesNotifier.value,
+                propertyNames: dataService.propetyNamesNotifier.value,
+              );
             case TableStatus.error:
               return const Center(
                   child: Text("Aconteceu um imprevisto, chame o DevOps"));
@@ -76,7 +83,7 @@ class MyBottomNav extends HookWidget {
         currentIndex: state.value,
         items: const [
           BottomNavigationBarItem(
-            label: "Cafés",
+            label: "Classificação",
             icon: Icon(Icons.coffee_outlined),
           ),
           BottomNavigationBarItem(
