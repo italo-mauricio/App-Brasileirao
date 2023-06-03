@@ -1,4 +1,4 @@
-<h1 align="center">Aplicativo Brasileirão</h1>
+<h1 align="center">Aplicativo Brasileirão Max</h1>
 
 ## Informações Gerais
 
