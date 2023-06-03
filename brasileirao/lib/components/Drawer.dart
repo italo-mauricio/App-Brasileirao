@@ -13,7 +13,7 @@ class DrawerApp extends StatelessWidget {
               UserAccountsDrawerHeader(
                 currentAccountPicture: ClipRRect(
                   borderRadius: BorderRadius.circular(40),
-                  child: Image.asset('assets/images/logo_usuario.jpg'),
+                  child: Image.asset('assets/logo.png'),
                 ),
                 accountName: const Text('Usuário'),
                 accountEmail: const Text('usuariobrasileirao@gmail.com'),
