@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import '../App/utils/Controller.dart';
-import 'sections/DataTable.dart';
+import '../utils/Controller.dart';
+import 'package:brasileirao/sections/DataTable.dart';
 
 var dataService = DataService();
 

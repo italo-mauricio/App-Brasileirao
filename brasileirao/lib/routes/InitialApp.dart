@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
-import 'app_home.dart';
+import '../login/LoginPage.dart';
+import '../home/HomePage.dart';
 
 
 
