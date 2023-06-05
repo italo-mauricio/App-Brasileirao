@@ -21,6 +21,8 @@ class _LoginPageState extends State<LoginPage> {
   String password = '';
   String errorMessage = '';
 
+  TextEditingController passwordController = TextEditingController();
+
   List<Map<String, String>> validUsers = [
     {'email': 'italomauricio@gmail.com', 'password': '123'},
     {'email': 'outroemail@example.com', 'password': 'outrasenha'},
@@ -51,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: [
                       TextField(
+                        autofocus: true,
                         onChanged: (text) {
                           setState(() {
                             email = text;
@@ -64,6 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 15),
                       TextField(
+                        controller: passwordController,
                         onChanged: (text) {
                           setState(() {
                             password = text;
@@ -96,7 +100,9 @@ class _LoginPageState extends State<LoginPage> {
                           } else {
                             if (kDebugMode) {
                               setState(() {
+                                passwordController.clear();
                                 errorMessage = 'E-mail ou senha incorretos';
+                                
                               });
                               print("E-mail ou senha incorretos");
                               print("Login Inválido");
@@ -122,6 +128,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose(){
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
