@@ -25,9 +25,7 @@ class DataService {
 
   void chamarApi(index) {
     final requisicoes = [print, partidas, print];
-    tableStateNotifier.value = {
-      'status': TableStatus.loading
-      };
+    tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
   }
 
@@ -63,26 +61,26 @@ class DataService {
         List matchesJson = jsonDecode(matchesString)["partidas"].map((p) {
           return {
             'placar': p["placar"],
-            'estadio': p["estadio"]["nome_popular"]
+            'sigla_mandante':p["time_mandante"]["sigla"],
+            'time_mandante':p["time_mandante"]["escudo"],
+            'sigla_visitante':p["time_visitante"]["sigla"],
+            'time_visitante':p["time_visitante"]["escudo"],
+            'data':p["data_realizacao"],
+            'hora':p["hora_realizacao"],
+            'local': p["estadio"]["nome_popular"]
           };
         }).toList();
-
         tableStateNotifier.value = {
           'status': TableStatus.readyMatches,
           'dataObjects': matchesJson,
-          'columnNames': ["Jogo", "Local"],
-          'propertyNames': ["placar", "estadio"]
+          'columnNames': ["Jogo", "Casa","escudoCasa","fora","escudoFora","data","hora","local"],
+          'propertyNames': ["placar", 'sigla_mandante','time_mandante','sigla_visitante','time_visitante','data','hora','local']
         };
-
       } catch (e) {
-        tableStateNotifier.value = {
-        'status': TableStatus.error
-        };
+        tableStateNotifier.value = {'status': TableStatus.error};
       }
     } catch (e) {
-      tableStateNotifier.value = {
-        'status': TableStatus.error
-      };
+      tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
 }
