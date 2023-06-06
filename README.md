@@ -26,10 +26,14 @@ O aplicativo para Android e IOS, desenvolvido em Flutter e utilizando toda a pot
       Entre na pasta do projeto utilizando o comando "cd".
       
 * Passo 3:
+      
+      Use o comando flutter pub get
+      
+* Passo 4:
 
       Utilize o comando "flutter run".
       
-* Passo 4:
+* Passo 5:
 
       Escolha o dispositivo que você deseja rodar.
       
