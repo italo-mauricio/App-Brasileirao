@@ -28,7 +28,8 @@ class MyApp extends StatelessWidget {
         ),
         body: const MyBody(),
         drawer: DrawerApp(logoutCallback: logoutCallback),
-        bottomNavigationBar: MyBottomNav(itemSelectedCallback: dataService.chamarApi),
+        bottomNavigationBar:
+            MyBottomNav(itemSelectedCallback: dataService.chamarApi),
       ),
     );
   }
@@ -55,6 +56,12 @@ class MyBody extends StatelessWidget {
               columnNames: dataService.columnsNamesNotifier.value,
               propertyNames: dataService.propetyNamesNotifier.value,
             );
+          case TableStatus.readyTable:
+            return DataTableWidget(
+              jsonObjects: value['dataObjects'],
+              columnNames: dataService.columnsNamesNotifier.value,
+              propertyNames: dataService.propetyNamesNotifier.value,
+            );
           case TableStatus.error:
             return const Center(
                 child: Text("Aconteceu um imprevisto, chame o DevOps"));
@@ -68,7 +75,8 @@ class MyBody extends StatelessWidget {
 class MyBottomNav extends HookWidget {
   final _itemSelectedCallback;
 
-  MyBottomNav({itemSelectedCallback}) : _itemSelectedCallback = itemSelectedCallback ?? (int);
+  MyBottomNav({itemSelectedCallback})
+      : _itemSelectedCallback = itemSelectedCallback ?? (int);
 
   @override
   Widget build(BuildContext context) {
@@ -89,16 +97,16 @@ class MyBottomNav extends HookWidget {
           currentIndex: state.value,
           items: const [
             BottomNavigationBarItem(
-              label: "Classificação",
-              icon: Icon(Icons.coffee_outlined),
+              label: "Tabela",
+              icon: Icon(Icons.bar_chart_outlined),
             ),
             BottomNavigationBarItem(
-              label: "Cervejas",
-              icon: Icon(Icons.local_drink_outlined),
+              label: "Partidas",
+              icon: Icon(Icons.sports_soccer_outlined),
             ),
             BottomNavigationBarItem(
-              label: "Nações",
-              icon: Icon(Icons.flag_outlined),
+              label: "Artilheiros",
+              icon: Icon(Icons.star),
             ),
           ],
         ),
