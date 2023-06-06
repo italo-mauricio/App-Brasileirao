@@ -2,8 +2,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../utils/keysAuth.dart';
 
-enum TableStatus { idle, loading, ready, readyTable, readyPlayers, readyMatches, error }
+enum TableStatus {
+  idle,
+  loading,
+  ready,
+  readyTable,
+  readyPlayers,
+  readyMatches,
+  error
+}
+
 class DataService {
   final ValueNotifier<Map<String, dynamic>> tableStateNotifier =
       ValueNotifier({'status': TableStatus.idle, 'dataObjects': []});
@@ -21,14 +31,14 @@ class DataService {
 
 // https://api.api-futebol.com.br/v1/campeonatos/10/rodadas/8
   Future<void> partidas() async {
+    var key = auths();
     var recPartidas = Uri(
         scheme: 'https',
         host: 'api.api-futebol.com.br',
         path: 'v1/campeonatos/10/rodadas/8');
     try {
-      var jsonString = await http.read(recPartidas, headers: {
-        'Authorization': 'Bearer live_b8af81619c2465683b1395abe5568b'
-      });
+      var jsonString = await http
+          .read(recPartidas, headers: {'Authorization': key});
       var partidasJson = jsonDecode(jsonString)["partidas"];
       // print(partidasJson);
       tableStateNotifier.value = {
@@ -44,5 +54,4 @@ class DataService {
       };
     }
   }
-
 }
