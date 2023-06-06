@@ -13,7 +13,6 @@ enum TableStatus {
   readyMatches,
   error
 }
-
 class DataService {
   final ValueNotifier<Map<String, dynamic>> tableStateNotifier =
       ValueNotifier({'status': TableStatus.idle, 'dataObjects': []});
@@ -21,6 +20,7 @@ class DataService {
   final ValueNotifier<List<String>> propetyNamesNotifier = ValueNotifier([]);
 
   void chamarApi(index) {
+    // ignore: avoid_print
     final requisicoes = [partidas];
     tableStateNotifier.value = {
       'status': TableStatus.loading,
@@ -32,26 +32,35 @@ class DataService {
 // https://api.api-futebol.com.br/v1/campeonatos/10/rodadas/8
   Future<void> partidas() async {
     var key = auths();
+    // int rodadas = 8;
+    // var recPartidas = Uri(
+    //     scheme: 'https',
+    //     host: 'api.api-futebol.com.br',
+    //     path: 'v1/campeonatos/10/rodadas/$rodadas');
+    // https://api.api-futebol.com.br/v1/campeonatos/10/rodadas
     var recPartidas = Uri(
         scheme: 'https',
         host: 'api.api-futebol.com.br',
-        path: 'v1/campeonatos/10/rodadas/8');
+        path: 'v1/campeonatos/10/rodadas');
     try {
       var jsonString = await http
           .read(recPartidas, headers: {'Authorization': key});
-      var partidasJson = jsonDecode(jsonString)["partidas"];
-      // print(partidasJson);
+      List partidasJson = jsonDecode(jsonString);
+      var rodada = partidasJson.firstWhere((p) => p["status"] == "agendada");
+      print(rodada["rodada"]);
       tableStateNotifier.value = {
         'status': TableStatus.readyMatches,
-        'dataObjects': partidasJson,
+        'dataObjects': [rodada],
       };
-      propetyNamesNotifier.value = ["placar"];
-      columnsNamesNotifier.value = ["Placar"];
+      propetyNamesNotifier.value = ["nome"];
+      columnsNamesNotifier.value = ["Nome"];
     } catch (e) {
+      print(e);
       tableStateNotifier.value = {
         'status': TableStatus.error,
         'dataObjects': []
       };
     }
   }
+
 }
