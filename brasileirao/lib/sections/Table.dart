@@ -46,11 +46,11 @@ class _TableWidgetState extends State<TableWidget> {
           children: [
             PopupMenuButton<String>(
               itemBuilder: (context) => [
-                PopupMenuItem(
+                const PopupMenuItem(
                   value: 'default',
                   child: Text('Ordem Padrão'),
                 ),
-                PopupMenuItem(
+                const PopupMenuItem(
                   value: 'alphabetical',
                   child: Text('Ordem Alfabética'),
                 ),

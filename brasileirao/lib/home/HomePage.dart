@@ -6,7 +6,6 @@ import '../utils/Controller.dart';
 import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
 
-
 var dataService = DataService();
 
 class MyApp extends StatelessWidget {
@@ -54,34 +53,43 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
-
 class MyBody extends StatelessWidget {
   const MyBody({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return ValueListenableBuilder<Map<String, dynamic>>(
       valueListenable: dataService.tableStateNotifier,
       builder: (_, value, __) {
         switch (value['status']) {
           case TableStatus.idle:
-            return const Center(
-              child: Text("Clique em algo para continuar"),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Clique em algo para continuar"),
+                  const SizedBox(height: 16),
+                  Image.asset(
+                    'lib/assets/logo_vintage.png',
+                    width: 200,
+                    height: 200,
+                  ),
+                ],
+              ),
             );
           case TableStatus.loading:
             return const Center(child: CircularProgressIndicator());
           case TableStatus.readyRound:
             return Text(
-                "Carregando rodada atual ${value['round']['rodada']}...");
+              "Carregando rodada atual ${value['round']['rodada']}...",
+              style: TextStyle(fontSize: 18),
+            );
           case TableStatus.readyMatches:
             return MatchesWidget(jsonObjects: value['dataObjects']);
           case TableStatus.readyTable:
             return TableWidget(jsonObjects: value['dataObjects']);
           case TableStatus.error:
-            return const Center(
-                child: Text("Aconteceu um imprevisto, chame o DevOps"));
+            return const Center(child: Text("Aconteceu um imprevisto, chame o DevOps"));
         }
         return const Text("...");
       },
@@ -89,12 +97,10 @@ class MyBody extends StatelessWidget {
   }
 }
 
-
 class MyBottomNav extends HookWidget {
   final _itemSelectedCallback;
 
-  MyBottomNav({itemSelectedCallback})
-      : _itemSelectedCallback = itemSelectedCallback ?? (int);
+  MyBottomNav({itemSelectedCallback}) : _itemSelectedCallback = itemSelectedCallback ?? (int);
 
   @override
   Widget build(BuildContext context) {
