@@ -43,9 +43,7 @@ class DataService {
       var rodada = partidasJson.firstWhere((p) => p["status"] == "agendada");
       tableStateNotifier.value = {
         'status': TableStatus.readyRound,
-        'round': rodada,
-        'columnNames': [],
-        'propertyNames': []
+        'round': rodada
       };
 
       var numRodada = rodada["rodada"];
@@ -72,9 +70,7 @@ class DataService {
         }).toList();
         tableStateNotifier.value = {
           'status': TableStatus.readyMatches,
-          'dataObjects': matchesJson,
-          'columnNames': ["Jogo", "Casa","escudoCasa","fora","escudoFora","data","hora","local"],
-          'propertyNames': ["placar", 'sigla_mandante','time_mandante','sigla_visitante','time_visitante','data','hora','local']
+          'dataObjects': matchesJson
         };
       } catch (e) {
         tableStateNotifier.value = {'status': TableStatus.error};
