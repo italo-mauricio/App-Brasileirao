@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import '../components/Drawer.dart';
 import '../utils/Controller.dart';
 import 'package:brasileirao/sections/DataTable.dart';
+import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
 
 var dataService = DataService();
@@ -54,11 +55,7 @@ class MyBody extends StatelessWidget {
             return Text(
                 "Carregando rodada atual ${value['round']['rodada']}...");
           case TableStatus.readyMatches:
-            return DataTableWidget(
-              jsonObjects: value['dataObjects'],
-              columnNames: value['columnNames'],
-              propertyNames: value['propertyNames'],
-            );
+            return MatchesWidget(jsonObjects: value['dataObjects']);
           case TableStatus.error:
             return const Center(
                 child: Text("Aconteceu um imprevisto, chame o DevOps"));
