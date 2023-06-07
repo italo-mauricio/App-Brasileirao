@@ -31,7 +31,7 @@ O aplicativo para Android e IOS, desenvolvido em Flutter e utilizando toda a pot
       
 * Passo 4:
 
-      Utilize o comando "flutter run".
+      Utilize o comando "flutter run -d (seu navegador de preferência) --web-renderer html".
       
 * Passo 5:
 
