@@ -137,7 +137,7 @@ class MyBottomNav extends HookWidget {
           icon: Icon(Icons.sports_soccer),
         ),
         BottomNavigationBarItem(
-          label: "Classificação Copa do Brasil",
+          label: "Chaveamento Copa do Brasil",
           icon: Icon(Icons.star),
         ),
         BottomNavigationBarItem(
