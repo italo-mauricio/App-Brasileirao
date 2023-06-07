@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:brasileirao/utils/Controller.dart';
+import 'package:brasileirao/controllers/BrasileiraoController.dart';
 
 import '../home/HomePage.dart';
 
