@@ -2,7 +2,7 @@ import 'package:brasileirao/sections/Table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../components/Drawer.dart';
-import '../utils/Controller.dart';
+import '../controllers/BrasileiraoController.dart';
 import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
 
