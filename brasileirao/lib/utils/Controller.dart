@@ -24,7 +24,7 @@ class DataService {
   });
 
   void chamarApi(index) {
-    final requisicoes = [print, partidas, print];
+    final requisicoes = [print, partidas, artilheiro];
     tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
   }
@@ -83,4 +83,43 @@ class DataService {
       tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
+
+Future<void> artilheiro() async {
+  var key = auths();
+  var artil = Uri(
+    scheme: 'https',
+    host: 'api.api-futebol.com.br',
+    path: 'v1/campeonatos/10/artilharia',
+  );
+
+  try {
+    var response = await http.head(artil, headers: {'Authorization': key});
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      var jsonData = jsonDecode(response.body);
+      List artMatchesJson = jsonData.map((p) {
+        return {
+          'atleta': p['atleta']['nome_popular'],
+          'time': p['time']['nome_popular'],
+          'escudo': p['time']['escudo'],
+          'gols': p['gols'],
+        };
+      }).toList();
+
+      tableStateNotifier.value = {
+        'status': TableStatus.readyMatches,
+        "dataObjects": artMatchesJson,
+        'columnNames': ["Atleta", "Time", "Escudo", "Gols"],
+        'propertyNames': ["atleta", "time", "escudo", "gols"],
+      };
+    } else {
+      print('Erro na requisição: ${response.statusCode}');
+      tableStateNotifier.value = {'status': TableStatus.error};
+    }
+  } catch (e) {
+    print('Exceção durante a requisição: $e');
+    tableStateNotifier.value = {'status': TableStatus.error};
+  }
+}
+
 }
