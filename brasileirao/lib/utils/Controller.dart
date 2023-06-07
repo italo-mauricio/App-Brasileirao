@@ -23,7 +23,6 @@ class DataService {
     'propertyNames': []
   });
 
-
   void chamarApi(index) {
     final requisicoes = [tabela, partidas, print];
     tableStateNotifier.value = {'status': TableStatus.loading};
@@ -106,23 +105,20 @@ class DataService {
   Future<void> tabela() async {
     var key = auths();
     var recTabela = Uri(
-        scheme: 'https',
-        host: 'api.api-futebol.com.br',
-        path: 'v1/campeonatos/10/tabela');
+      scheme: 'https',
+      host: 'api.api-futebol.com.br',
+      path: 'v1/campeonatos/10/tabela',
+    );
+
     try {
       var jsonString =
           await http.read(recTabela, headers: {'Authorization': key});
       var tabelaJson = jsonDecode(jsonString);
-      tableStateNotifier.value = {
-        'status': TableStatus.readyTable,
-        'round': tabelaJson,
-        'columnNames': [],
-        'propertyNames': []
-      };
-      // transformo toda a tabela de classificação em uma lista dynamic
+
+      // Transforma toda a tabela de classificação em uma lista dynamic
       List<dynamic> classificacao = tabelaJson as List<dynamic>;
 
-      // jogo tudo num Map
+      // Cria uma lista de Map para armazenar as informações tratadas
       List<Map<String, dynamic>> times = [];
       classificacao.forEach((item) {
         int posicao = item['posicao'];
@@ -141,16 +137,30 @@ class DataService {
         times.add(timeData);
       });
 
-      // Exiba as informações convertidas
+      List<String> columnNames = [
+        'Posição',
+        'Pontos',
+        'Nome Popular',
+        'Sigla',
+        'Escudo'
+      ];
+
+      List<String> propertyNames = [
+        'posicao',
+        'pontos',
+        'nome_popular',
+        'sigla',
+        'escudo'
+      ];
+
       tableStateNotifier.value = {
         'status': TableStatus.readyTable,
         'dataObjects': times,
+        'columnNames': columnNames,
+        'propertyNames': propertyNames,
       };
     } catch (e) {
-      tableStateNotifier.value = {
-        'status': TableStatus.error,
-        'dataObjects': []
-      };
+      tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
 }

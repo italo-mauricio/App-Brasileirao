@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../components/Drawer.dart';
 import '../utils/Controller.dart';
-import 'package:brasileirao/sections/DataTable.dart';
 import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
+
 
 var dataService = DataService();
 
@@ -19,23 +19,43 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
-          title: Center(
-            child: Text(
-              "Brasileirão Max",
-              style: Fontes().FontHeader(),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(56), // Defina a altura desejada da AppBar
+          child: AppBar(
+            backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
+            title: Container(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Brasileirão Max",
+                        style: Fontes().FontHeader().copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Image.asset(
+                    'lib/assets/logo_campeonato.png',
+                    width: 50,
+                    height: 50,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
         body: const MyBody(),
         drawer: DrawerApp(logoutCallback: logoutCallback),
-        bottomNavigationBar:
-            MyBottomNav(itemSelectedCallback: dataService.chamarApi),
+        bottomNavigationBar: MyBottomNav(itemSelectedCallback: dataService.chamarApi),
       ),
     );
   }
 }
+
+
+
 
 class MyBody extends StatelessWidget {
   const MyBody({Key? key}) : super(key: key);
@@ -58,7 +78,7 @@ class MyBody extends StatelessWidget {
           case TableStatus.readyMatches:
             return MatchesWidget(jsonObjects: value['dataObjects']);
           case TableStatus.readyTable:
-            return TabelaWidget(jsonObjects: value['dataOjbects']);
+            return TableWidget(jsonObjects: value['dataObjects']);
           case TableStatus.error:
             return const Center(
                 child: Text("Aconteceu um imprevisto, chame o DevOps"));
@@ -68,6 +88,7 @@ class MyBody extends StatelessWidget {
     );
   }
 }
+
 
 class MyBottomNav extends HookWidget {
   final _itemSelectedCallback;
@@ -95,15 +116,15 @@ class MyBottomNav extends HookWidget {
           items: const [
             BottomNavigationBarItem(
               label: "Classificação",
-              icon: Icon(Icons.coffee_outlined),
+              icon: Icon(Icons.bar_chart_outlined),
             ),
             BottomNavigationBarItem(
               label: "Partidas",
-              icon: Icon(Icons.local_drink_outlined),
+              icon: Icon(Icons.sports_soccer),
             ),
             BottomNavigationBarItem(
               label: "Artilharia",
-              icon: Icon(Icons.flag_outlined),
+              icon: Icon(Icons.star),
             ),
           ],
         ),
