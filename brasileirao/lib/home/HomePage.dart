@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(56), // Defina a altura desejada da AppBar
+          preferredSize: const Size.fromHeight(56), // Defina a altura desejada da AppBar
           child: AppBar(
             backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
             title: Container(
@@ -35,9 +35,9 @@ class MyApp extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Image.asset(
-                    'lib/assets/logo_campeonato.png',
+                    'lib/assets/logo_vintage.png',
                     width: 50,
                     height: 50,
                   ),

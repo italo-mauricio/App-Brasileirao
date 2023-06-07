@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class TableWidget extends StatelessWidget {
   final List<Map<String, dynamic>> jsonObjects;
+
   const TableWidget({Key? key, required this.jsonObjects}) : super(key: key);
 
   @override
@@ -10,14 +11,25 @@ class TableWidget extends StatelessWidget {
       itemCount: jsonObjects.length,
       itemBuilder: (context, index) {
         return ListTile(
-          leading: Image.network(jsonObjects[index]['escudo']),
-          title: Text('Posição: ${jsonObjects[index]['posicao']}'),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          title: Row(
             children: [
-              Text('Pontos: ${jsonObjects[index]['pontos']}'),
-              Text('Nome Popular: ${jsonObjects[index]['nome_popular']}'),
-              Text('Sigla: ${jsonObjects[index]['sigla']}'),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Posição: ${jsonObjects[index]['posicao']}'),
+                    Text('Pontos: ${jsonObjects[index]['pontos']}'),
+                    Text('Nome Popular: ${jsonObjects[index]['nome_popular']}'),
+                    Text('Sigla: ${jsonObjects[index]['sigla']}'),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Image.network(jsonObjects[index]['escudo']),
+              ),
             ],
           ),
         );
