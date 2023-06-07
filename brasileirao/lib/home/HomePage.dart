@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import '../components/Drawer.dart';
 import '../utils/Controller.dart';
 import 'package:brasileirao/sections/DataTable.dart';
+import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
 
 var dataService = DataService();
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
         ),
         body: const MyBody(),
         drawer: DrawerApp(logoutCallback: logoutCallback),
-        bottomNavigationBar: MyBottomNav(itemSelectedCallback: dataService.chamarApi),
+        bottomNavigationBar:
+            MyBottomNav(itemSelectedCallback: dataService.chamarApi),
       ),
     );
   }
@@ -49,12 +51,11 @@ class MyBody extends StatelessWidget {
             );
           case TableStatus.loading:
             return const Center(child: CircularProgressIndicator());
+          case TableStatus.readyRound:
+            return Text(
+                "Carregando rodada atual ${value['round']['rodada']}...");
           case TableStatus.readyMatches:
-            return DataTableWidget(
-              jsonObjects: value['dataObjects'],
-              columnNames: dataService.columnsNamesNotifier.value,
-              propertyNames: dataService.propetyNamesNotifier.value,
-            );
+            return MatchesWidget(jsonObjects: value['dataObjects']);
           case TableStatus.error:
             return const Center(
                 child: Text("Aconteceu um imprevisto, chame o DevOps"));
@@ -68,7 +69,8 @@ class MyBody extends StatelessWidget {
 class MyBottomNav extends HookWidget {
   final _itemSelectedCallback;
 
-  MyBottomNav({itemSelectedCallback}) : _itemSelectedCallback = itemSelectedCallback ?? (int);
+  MyBottomNav({itemSelectedCallback})
+      : _itemSelectedCallback = itemSelectedCallback ?? (int);
 
   @override
   Widget build(BuildContext context) {
@@ -93,11 +95,11 @@ class MyBottomNav extends HookWidget {
               icon: Icon(Icons.coffee_outlined),
             ),
             BottomNavigationBarItem(
-              label: "Cervejas",
+              label: "Partidas",
               icon: Icon(Icons.local_drink_outlined),
             ),
             BottomNavigationBarItem(
-              label: "Nações",
+              label: "Artilharia",
               icon: Icon(Icons.flag_outlined),
             ),
           ],
