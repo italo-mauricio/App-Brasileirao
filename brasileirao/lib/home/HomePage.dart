@@ -19,7 +19,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(56), // Defina a altura desejada da AppBar
+          preferredSize:
+              const Size.fromHeight(56), // Defina a altura desejada da AppBar
           child: AppBar(
             backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
             title: Container(
@@ -30,7 +31,8 @@ class MyApp extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         "Brasileirão Max",
-                        style: Fontes().FontHeader().copyWith(color: Colors.white),
+                        style:
+                            Fontes().FontHeader().copyWith(color: Colors.white),
                       ),
                     ),
                   ),
@@ -47,7 +49,8 @@ class MyApp extends StatelessWidget {
         ),
         body: const MyBody(),
         drawer: DrawerApp(logoutCallback: logoutCallback),
-        bottomNavigationBar: MyBottomNav(itemSelectedCallback: dataService.chamarApi),
+        bottomNavigationBar:
+            MyBottomNav(itemSelectedCallback: dataService.chamarApi),
       ),
     );
   }
@@ -89,7 +92,8 @@ class MyBody extends StatelessWidget {
           case TableStatus.readyTable:
             return TableWidget(jsonObjects: value['dataObjects']);
           case TableStatus.error:
-            return const Center(child: Text("Aconteceu um imprevisto, chame o DevOps"));
+            return const Center(
+                child: Text("Aconteceu um imprevisto, chame o DevOps"));
         }
         return const Text("...");
       },
@@ -100,48 +104,44 @@ class MyBody extends StatelessWidget {
 class MyBottomNav extends HookWidget {
   final _itemSelectedCallback;
 
-  MyBottomNav({itemSelectedCallback}) : _itemSelectedCallback = itemSelectedCallback ?? (int);
+  MyBottomNav({required Function(int) itemSelectedCallback})
+      : _itemSelectedCallback = itemSelectedCallback;
 
   @override
   Widget build(BuildContext context) {
-    var state = useState(1);
+    var state = useState(0); // Defina o índice inicial do botão selecionado
 
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        BottomNavigationBar(
-          backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
-          selectedItemColor: const Color.fromRGBO(252, 193, 79, 1.0),
-          unselectedItemColor: const Color.fromARGB(248, 248, 248, 248),
-          selectedFontSize: 12.0,
-          onTap: (index) {
-            state.value = index;
-            _itemSelectedCallback(index);
-          },
-          currentIndex: state.value,
-          items: const [
-            BottomNavigationBarItem(
-              label: "Classificação",
-              icon: Icon(Icons.bar_chart_outlined),
-            ),
-            BottomNavigationBarItem(
-              label: "Partidas",
-              icon: Icon(Icons.sports_soccer),
-            ),
-            BottomNavigationBarItem(
-              label: "Artilharia",
-              icon: Icon(Icons.star),
-            ),
-          ],
+    return BottomNavigationBar(
+      backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
+      selectedItemColor: const Color.fromRGBO(252, 193, 79, 1.0),
+      unselectedItemColor: const Color.fromARGB(248, 248, 248, 248),
+      selectedFontSize: 12.0,
+      showSelectedLabels: true, // Exibir rótulos dos botões selecionados
+      showUnselectedLabels:
+          false, // Ocultar rótulos dos botões não selecionados
+      type: BottomNavigationBarType
+          .fixed, // Exibir todos os botões mesmo quando adicionados mais um
+      onTap: (index) {
+        state.value = index;
+        _itemSelectedCallback(index);
+      },
+
+      currentIndex: state.value,
+      items: const [
+        BottomNavigationBarItem(
+          label: "Classificação",
+          icon: Icon(Icons.bar_chart_outlined),
         ),
-        Positioned(
-          top: 0,
-          child: Container(
-            color: Colors.white,
-            height: 4.0,
-            width: MediaQuery.of(context).size.width / 3,
-          ),
+        BottomNavigationBarItem(
+          label: "Partidas",
+          icon: Icon(Icons.sports_soccer),
         ),
+        BottomNavigationBarItem(
+          label: "Chaveamento Copa do Brasil",
+          icon: Icon(Icons.star),
+        ),
+        BottomNavigationBarItem(
+            label: "Partidas Copa do Brasil", icon: Icon(Icons.abc))
       ],
     );
   }
