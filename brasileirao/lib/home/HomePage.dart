@@ -91,6 +91,8 @@ class MyBody extends StatelessWidget {
             return MatchesWidget(jsonObjects: value['dataObjects']);
           case TableStatus.readyTable:
             return TableWidget(jsonObjects: value['dataObjects']);
+          case TableStatus.readyPhase:
+            return TableWidget(jsonObjects: value['dataObjects']);
           case TableStatus.error:
             return const Center(
                 child: Text("Aconteceu um imprevisto, chame o DevOps"));

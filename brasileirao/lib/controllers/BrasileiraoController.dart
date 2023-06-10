@@ -12,6 +12,7 @@ enum TableStatus {
   readyRound,
   readyPlayers,
   readyMatches,
+  readyPhase,
   error
 }
 
@@ -24,7 +25,7 @@ class DataService {
   });
 
   void chamarApi(index) {
-    final requisicoes = [tabela, partidas, print];
+    final requisicoes = [tabela, partidas, fasesCopa, print];
     tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
   }
@@ -155,6 +156,72 @@ class DataService {
 
       tableStateNotifier.value = {
         'status': TableStatus.readyTable,
+        'dataObjects': times,
+        'columnNames': columnNames,
+        'propertyNames': propertyNames,
+      };
+    } catch (e) {
+      tableStateNotifier.value = {'status': TableStatus.error};
+    }
+  }
+
+  Future<void> fasesCopa() async {
+    var key = auths();
+    var recFasesCopa = Uri(
+      scheme: 'https',
+      host: 'api.api-futebol.com.br',
+      path: 'v1/campeonatos/2/fases/310',
+    );
+
+    try {
+      var jsonString =
+          await http.read(recFasesCopa, headers: {'Authorization': key});
+      var tabelaJson = jsonDecode(jsonString);
+
+      // Transforma toda a tabela de classificação em uma lista dynamic
+      List<dynamic> fasesCopaBrasil = tabelaJson as List<dynamic>;
+
+      // Cria uma lista de Map para armazenar as informações tratadas
+      List<Map<String, dynamic>> times = [];
+      fasesCopaBrasil.forEach((item) {
+      //  int faseId = item['fase_id'];
+        int edicao = item['edicao_id'];
+        Map<String, dynamic> timeInfo = item['edicao'];
+        String nomePopular = timeInfo['nome_popular'];
+        String nome = timeInfo['nome'];
+        String temporada = timeInfo['temporada'];
+        String slug = timeInfo['slug'];
+        Map<String, dynamic> timeData = {
+        //  'fase_id': faseId.toString(),
+          'edicao_id': edicao.toString(),
+          'nome_popular': nomePopular,
+          'nome': nome,
+          'temporada': temporada,
+          'slug': slug,
+        };
+        times.add(timeData);
+      });
+
+      List<String> columnNames = [
+       // 'Fase_id',
+        'Edicao_id',
+        'Nome Popular',
+        'Nome',
+        'Temporada',
+        'Slug'
+      ];
+
+      List<String> propertyNames = [
+       // 'fase_id',
+        'edicao_id',
+        'nome_popular',
+        'nome',
+        'temporada',
+        'slug',
+      ];
+
+      tableStateNotifier.value = {
+        'status': TableStatus.readyPhase,
         'dataObjects': times,
         'columnNames': columnNames,
         'propertyNames': propertyNames,
