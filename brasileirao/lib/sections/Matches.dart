@@ -11,8 +11,9 @@ class MatchesWidget extends StatelessWidget {
     return ListView.builder(
         itemCount: jsonObjects.length,
         itemBuilder: (BuildContext context, int index) {
-          return Card(
-            child: Padding(
+          return ListTile(
+            onTap: () => print("Descrição da partida"),
+            title: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
