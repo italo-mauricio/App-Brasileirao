@@ -22,6 +22,7 @@ class DataService {
     'columnNames': [],
     'propertyNames': []
   });
+  late int rodada;
 
   void chamarApi(index) {
     final requisicoes = [tabela, partidas, print, print];
@@ -40,7 +41,7 @@ class DataService {
       var jsonString =
           await http.read(recRodada, headers: {'Authorization': key});
       dynamic partidasJson = jsonDecode(jsonString);
-      var rodada = partidasJson["rodada_atual"]["rodada"];
+      rodada = partidasJson["rodada_atual"]["rodada"];
       var recPartidas = Uri(
           scheme: 'https',
           host: 'api.api-futebol.com.br',
@@ -69,6 +70,38 @@ class DataService {
         print(e);
         tableStateNotifier.value = {'status': TableStatus.error};
       }
+    } catch (e) {
+      print(e);
+      tableStateNotifier.value = {'status': TableStatus.error};
+    }
+  }
+
+  Future<void> partidasR(int rodadas) async {
+    var key = auths();
+    var recPartidas = Uri(
+        scheme: 'https',
+        host: 'api.api-futebol.com.br',
+        path: 'v1/campeonatos/10/rodadas/$rodada');
+    try {
+      var matchesString =
+          await http.read(recPartidas, headers: {'Authorization': key});
+      List matchesJson = jsonDecode(matchesString)["partidas"].map((p) {
+        return {
+          'placar': p["placar"],
+          'sigla_mandante': p["time_mandante"]["sigla"],
+          'time_mandante': p["time_mandante"]["escudo"],
+          'sigla_visitante': p["time_visitante"]["sigla"],
+          'time_visitante': p["time_visitante"]["escudo"],
+          'data': p["data_realizacao"],
+          'hora': p["hora_realizacao"],
+          'local': p["estadio"]["nome_popular"]
+        };
+      }).toList();
+      tableStateNotifier.value = {
+        'status': TableStatus.readyMatches,
+        'dataObjects': matchesJson,
+        'utils': rodada
+      };
     } catch (e) {
       print(e);
       tableStateNotifier.value = {'status': TableStatus.error};
