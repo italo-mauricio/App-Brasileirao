@@ -83,7 +83,33 @@ class MyBody extends StatelessWidget {
           case TableStatus.loading:
             return const Center(child: CircularProgressIndicator());
           case TableStatus.readyMatches:
-            return MatchesWidget(jsonObjects: value['dataObjects'], rounds: 10);
+            return Column(children: [
+              SizedBox(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                        iconSize: 30,
+                        icon: const Icon(Icons.chevron_left_sharp),
+                        onPressed: (() {
+                          dataService.partidasR(dataService.rodada--);
+                        })),
+                    Text("Rodada: ${dataService.rodada}",
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    IconButton(
+                      iconSize: 30,
+                      icon: const Icon(Icons.chevron_right_sharp),
+                      onPressed: (() {
+                        dataService.partidasR(dataService.rodada++);
+                      }),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(child: MatchesWidget(jsonObjects: value['dataObjects']))
+            ]);
           case TableStatus.readyTable:
             return TableWidget(jsonObjects: value['dataObjects']);
           case TableStatus.error:
