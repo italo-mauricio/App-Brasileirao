@@ -82,13 +82,8 @@ class MyBody extends StatelessWidget {
             );
           case TableStatus.loading:
             return const Center(child: CircularProgressIndicator());
-          case TableStatus.readyRound:
-            return Text(
-              "Carregando rodada atual ${value['round']['rodada']}...",
-              style: TextStyle(fontSize: 18),
-            );
           case TableStatus.readyMatches:
-            return MatchesWidget(jsonObjects: value['dataObjects']);
+            return MatchesWidget(jsonObjects: value['dataObjects'], rounds: 10);
           case TableStatus.readyTable:
             return TableWidget(jsonObjects: value['dataObjects']);
           case TableStatus.error:
