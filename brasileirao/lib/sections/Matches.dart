@@ -1,53 +1,74 @@
 import 'package:flutter/material.dart';
+import '../sections/matchesDescriptions.dart';
+class MatchesWidget extends StatefulWidget {
+  final List jsonObjects;
 
-class MatchesWidget extends StatelessWidget {
-  late final List jsonObjects;
+  MatchesWidget({Key? key, required this.jsonObjects}) : super(key: key);
 
-  MatchesWidget({super.key, required this.jsonObjects});
+  @override
+  _MatchesWidgetState createState() => _MatchesWidgetState();
+}
+
+class _MatchesWidgetState extends State<MatchesWidget> {
+  int selectedMatchIndex = -1;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-        itemCount: jsonObjects.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            onTap: () => print("Descrição da partida"),
-            title: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(children: [
+      itemCount: widget.jsonObjects.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          onTap: () {
+            setState(() {
+              selectedMatchIndex = index;
+            });
+          },
+          title: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
                     Image.network(
-                      jsonObjects[index]["time_mandante"],
+                      widget.jsonObjects[index]["time_mandante"],
                       width: 50,
                       height: 50,
                       fit: BoxFit.contain,
                     ),
-                    Text(jsonObjects[index]["sigla_mandante"]),
-                  ]),
-                  Column(children: [
+                    Text(widget.jsonObjects[index]["sigla_mandante"]),
+                  ],
+                ),
+                Column(
+                  children: [
                     Text(
-                      jsonObjects[index]["placar"],
+                      widget.jsonObjects[index]["placar"],
                       style: const TextStyle(fontSize: 18),
                     ),
-                    Text(jsonObjects[index]["data"] +
+                    Text(widget.jsonObjects[index]["data"] +
                         " " +
-                        jsonObjects[index]["hora"])
-                  ]),
-                  Column(children: [
+                        widget.jsonObjects[index]["hora"]),
+                  ],
+                ),
+                Column(
+                  children: [
                     Image.network(
-                      jsonObjects[index]["time_visitante"],
+                      widget.jsonObjects[index]["time_visitante"],
                       width: 50,
                       height: 50,
                       fit: BoxFit.contain,
                     ),
-                    Text(jsonObjects[index]["sigla_visitante"]),
-                  ]),
-                ],
-              ),
+                    Text(widget.jsonObjects[index]["sigla_visitante"]),
+                  ],
+                ),
+              ],
             ),
-          );
-        });
+          ),
+          subtitle: selectedMatchIndex == index
+              ? const DescriptionMathces(DescriptionJsonObject: [])
+              : null,
+        );
+      },
+    );
   }
 }
