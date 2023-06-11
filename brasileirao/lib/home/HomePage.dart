@@ -1,8 +1,8 @@
+import 'package:brasileirao/sections/Table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../components/Drawer.dart';
-import '../utils/Controller.dart';
-import 'package:brasileirao/sections/DataTable.dart';
+import '../controllers/BrasileiraoController.dart';
 import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
 
@@ -18,12 +18,32 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
-          title: Center(
-            child: Text(
-              "Brasileirão Max",
-              style: Fontes().FontHeader(),
+        appBar: PreferredSize(
+          preferredSize:
+              const Size.fromHeight(56), // Defina a altura desejada da AppBar
+          child: AppBar(
+            backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
+            title: Container(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Brasileirão Max",
+                        style:
+                            Fontes().FontHeader().copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Image.asset(
+                    'lib/assets/logo_vintage.png',
+                    width: 50,
+                    height: 50,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -41,21 +61,36 @@ class MyBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return ValueListenableBuilder<Map<String, dynamic>>(
       valueListenable: dataService.tableStateNotifier,
       builder: (_, value, __) {
         switch (value['status']) {
           case TableStatus.idle:
-            return const Center(
-              child: Text("Clique em algo para continuar"),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Clique em algo para continuar"),
+                  const SizedBox(height: 16),
+                  Image.asset(
+                    'lib/assets/logo_vintage.png',
+                    width: 200,
+                    height: 200,
+                  ),
+                ],
+              ),
             );
           case TableStatus.loading:
             return const Center(child: CircularProgressIndicator());
           case TableStatus.readyRound:
             return Text(
-                "Carregando rodada atual ${value['round']['rodada']}...");
+              "Carregando rodada atual ${value['round']['rodada']}...",
+              style: TextStyle(fontSize: 18),
+            );
           case TableStatus.readyMatches:
             return MatchesWidget(jsonObjects: value['dataObjects']);
+          case TableStatus.readyTable:
+            return TableWidget(jsonObjects: value['dataObjects']);
           case TableStatus.error:
             return const Center(
                 child: Text("Aconteceu um imprevisto, chame o DevOps"));
@@ -69,49 +104,44 @@ class MyBody extends StatelessWidget {
 class MyBottomNav extends HookWidget {
   final _itemSelectedCallback;
 
-  MyBottomNav({itemSelectedCallback})
-      : _itemSelectedCallback = itemSelectedCallback ?? (int);
+  MyBottomNav({required Function(int) itemSelectedCallback})
+      : _itemSelectedCallback = itemSelectedCallback;
 
   @override
   Widget build(BuildContext context) {
-    var state = useState(1);
+    var state = useState(0); // Defina o índice inicial do botão selecionado
 
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        BottomNavigationBar(
-          backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
-          selectedItemColor: const Color.fromRGBO(252, 193, 79, 1.0),
-          unselectedItemColor: const Color.fromARGB(248, 248, 248, 248),
-          selectedFontSize: 12.0,
-          onTap: (index) {
-            state.value = index;
-            _itemSelectedCallback(index);
-          },
-          currentIndex: state.value,
-          items: const [
-            BottomNavigationBarItem(
-              label: "Classificação",
-              icon: Icon(Icons.coffee_outlined),
-            ),
-            BottomNavigationBarItem(
-              label: "Partidas",
-              icon: Icon(Icons.local_drink_outlined),
-            ),
-            BottomNavigationBarItem(
-              label: "Artilharia",
-              icon: Icon(Icons.flag_outlined),
-            ),
-          ],
+    return BottomNavigationBar(
+      backgroundColor: const Color.fromRGBO(35, 131, 51, 1.0),
+      selectedItemColor: const Color.fromRGBO(252, 193, 79, 1.0),
+      unselectedItemColor: const Color.fromARGB(248, 248, 248, 248),
+      selectedFontSize: 12.0,
+      showSelectedLabels: true, // Exibir rótulos dos botões selecionados
+      showUnselectedLabels:
+          false, // Ocultar rótulos dos botões não selecionados
+      type: BottomNavigationBarType
+          .fixed, // Exibir todos os botões mesmo quando adicionados mais um
+      onTap: (index) {
+        state.value = index;
+        _itemSelectedCallback(index);
+      },
+
+      currentIndex: state.value,
+      items: const [
+        BottomNavigationBarItem(
+          label: "Classificação",
+          icon: Icon(Icons.bar_chart_outlined),
         ),
-        Positioned(
-          top: 0,
-          child: Container(
-            color: Colors.white,
-            height: 4.0,
-            width: MediaQuery.of(context).size.width / 3,
-          ),
+        BottomNavigationBarItem(
+          label: "Partidas",
+          icon: Icon(Icons.sports_soccer),
         ),
+        BottomNavigationBarItem(
+          label: "Chaveamento Copa do Brasil",
+          icon: Icon(Icons.star),
+        ),
+        BottomNavigationBarItem(
+            label: "Partidas Copa do Brasil", icon: Icon(Icons.abc))
       ],
     );
   }

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:brasileirao/controllers/BrasileiraoController.dart';
+
+import '../home/HomePage.dart';
+
 
 class DrawerApp extends StatelessWidget {
   final VoidCallback logoutCallback;
@@ -32,6 +36,9 @@ class DrawerApp extends StatelessWidget {
             title: const Text('Início'),
             subtitle: const Text('Tela de Início'),
             onTap: () {
+              dataService.tableStateNotifier.value = {
+                'status': TableStatus.idle,
+              };
               Navigator.pop(context);
             },
           ),
