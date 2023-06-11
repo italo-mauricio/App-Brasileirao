@@ -165,64 +165,78 @@ class DataService {
     }
   }
 
-  Future<void> fasesCopa() async {
+   Future<void> fasesCopa() async {
     var key = auths();
-    var recFasesCopa = Uri(
+    var recFases = Uri(
       scheme: 'https',
       host: 'api.api-futebol.com.br',
-      path: 'v1/campeonatos/2/fases/310',
+      path: 'v1/campeonatos/2/fases',
     );
 
     try {
-      var jsonString =
-          await http.read(recFasesCopa, headers: {'Authorization': key});
+      var jsonString = await http.read(recFases, headers: {'Authorization': key});
       var tabelaJson = jsonDecode(jsonString);
 
-      // Transforma toda a tabela de classificação em uma lista dynamic
       List<dynamic> fasesCopaBrasil = tabelaJson as List<dynamic>;
 
-      // Cria uma lista de Map para armazenar as informações tratadas
-      List<Map<String, dynamic>> times = [];
+      List<Map<String, dynamic>> fasesEdicao = [];
       fasesCopaBrasil.forEach((item) {
-      //  int faseId = item['fase_id'];
-        int edicao = item['edicao_id'];
-        Map<String, dynamic> timeInfo = item['edicao'];
-        String nomePopular = timeInfo['nome_popular'];
-        String nome = timeInfo['nome'];
+        int faseId = item['fase_id'];
+        Map<int, dynamic> timeInfo = item[faseId];
+        int edicaoId = item['edicao_id'];
         String temporada = timeInfo['temporada'];
+        String nome = timeInfo['nome'];
+        String nomePopular = timeInfo['nome_popular'];
         String slug = timeInfo['slug'];
-        Map<String, dynamic> timeData = {
-        //  'fase_id': faseId.toString(),
-          'edicao_id': edicao.toString(),
-          'nome_popular': nomePopular,
-          'nome': nome,
+        Map<String, dynamic> edicaoData = {
+          'fase_id': faseId.toString(),
+          'edicao_id': edicaoId.toString(),
           'temporada': temporada,
+          'nome': nome,
+          'nome_popular': nomePopular,
           'slug': slug,
         };
-        times.add(timeData);
+
+        List<dynamic> jogos = item['jogos'];
+        List<Map<String, dynamic>> confrontos = [];
+        jogos.forEach((jogo) {
+          String time1 = jogo['time1'];
+          String time2 = jogo['time2'];
+          String resultado = jogo['resultado'];
+          Map<String, dynamic> confronto = {
+            'time1': time1,
+            'time2': time2,
+            'resultado': resultado,
+          };
+          confrontos.add(confronto);
+        });
+
+        edicaoData['confrontos'] = confrontos;
+
+        fasesEdicao.add(edicaoData);
       });
 
       List<String> columnNames = [
-       // 'Fase_id',
+        'Fase_id',
         'Edicao_id',
-        'Nome Popular',
-        'Nome',
         'Temporada',
-        'Slug'
+        'Nome',
+        'Nome Popular',
+        'SLug'
       ];
 
       List<String> propertyNames = [
-       // 'fase_id',
+        'fase_id',
         'edicao_id',
-        'nome_popular',
-        'nome',
         'temporada',
+        'nome',
+        'nome_popular',
         'slug',
       ];
 
       tableStateNotifier.value = {
-        'status': TableStatus.readyPhase,
-        'dataObjects': times,
+        'status': TableStatus.readyTable,
+        'dataObjects': fasesEdicao,
         'columnNames': columnNames,
         'propertyNames': propertyNames,
       };
@@ -230,4 +244,5 @@ class DataService {
       tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
+
 }
