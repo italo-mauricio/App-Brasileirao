@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../controllers/BrasileiraoController.dart';
 
 class MatchesWidget extends StatelessWidget {
   late final List jsonObjects;
