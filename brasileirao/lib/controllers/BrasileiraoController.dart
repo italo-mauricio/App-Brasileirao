@@ -58,7 +58,8 @@ class DataService {
             'time_visitante': p["time_visitante"]["escudo"],
             'data': p["data_realizacao"],
             'hora': p["hora_realizacao"],
-            'local': p["estadio"]["nome_popular"]
+            'local': p["estadio"]["nome_popular"],
+            'partida':p["partida_id"]
           };
         }).toList();
         tableStateNotifier.value = {
@@ -75,6 +76,7 @@ class DataService {
       tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
+  
 
   Future<void> partidasR(int rodadas) async {
     var key = auths();
