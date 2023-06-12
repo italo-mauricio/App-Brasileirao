@@ -93,7 +93,7 @@ class MyBody extends StatelessWidget {
           case TableStatus.readyTable:
             return TableWidget(jsonObjects: value['dataObjects']);
           case TableStatus.readyPhase:
-            return TableWidget(jsonObjects: value['dataObjects']);
+            return Text("$value['dataObjects']");
           case TableStatus.error:
             return const Center(
                 child: Text("Aconteceu um imprevisto, chame o DevOps"));

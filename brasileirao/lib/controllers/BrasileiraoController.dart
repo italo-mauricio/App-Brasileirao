@@ -25,7 +25,7 @@ class DataService {
   });
 
   void chamarApi(index) {
-    final requisicoes = [tabela, partidas, fasesCopa, print];
+    final requisicoes = [tabela, partidas, fetchFasesCopa, print];
     tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
   }
@@ -165,84 +165,41 @@ class DataService {
     }
   }
 
-   Future<void> fasesCopa() async {
-    var key = auths();
+  Future<void> fetchFasesCopa() async {
+    var key = auths(); // Insira sua chave de API aqui
     var recFases = Uri(
       scheme: 'https',
       host: 'api.api-futebol.com.br',
       path: 'v1/campeonatos/2/fases',
     );
-
     try {
-      var jsonString = await http.read(recFases, headers: {'Authorization': key});
+      var jsonString =
+          await http.read(recFases, headers: {'Authorization': key});
       var tabelaJson = jsonDecode(jsonString);
 
-      List<dynamic> fasesCopaBrasil = tabelaJson as List<dynamic>;
+      List<dynamic> fasesCopaBrasil = tabelaJson;
 
-      List<Map<String, dynamic>> fasesEdicao = [];
-      fasesCopaBrasil.forEach((item) {
+      List<Map<String, dynamic>> fasesEdicao = fasesCopaBrasil.map((item) {
         int faseId = item['fase_id'];
-        Map<int, dynamic> timeInfo = item[faseId];
-        int edicaoId = item['edicao_id'];
-        String temporada = timeInfo['temporada'];
-        String nome = timeInfo['nome'];
-        String nomePopular = timeInfo['nome_popular'];
-        String slug = timeInfo['slug'];
-        Map<String, dynamic> edicaoData = {
-          'fase_id': faseId.toString(),
-          'edicao_id': edicaoId.toString(),
-          'temporada': temporada,
+        String nome = item['nome'];
+        String tipo = item['tipo'];
+        String proximaFaseNome =
+            item['proxima_fase'] != null ? item['proxima_fase']['nome'] : '';
+
+        return {
+          'fase_id': faseId,
           'nome': nome,
-          'nome_popular': nomePopular,
-          'slug': slug,
+          'tipo': tipo,
+          'proxima_fase_nome': proximaFaseNome,
         };
-
-        List<dynamic> jogos = item['jogos'];
-        List<Map<String, dynamic>> confrontos = [];
-        jogos.forEach((jogo) {
-          String time1 = jogo['time1'];
-          String time2 = jogo['time2'];
-          String resultado = jogo['resultado'];
-          Map<String, dynamic> confronto = {
-            'time1': time1,
-            'time2': time2,
-            'resultado': resultado,
-          };
-          confrontos.add(confronto);
-        });
-
-        edicaoData['confrontos'] = confrontos;
-
-        fasesEdicao.add(edicaoData);
-      });
-
-      List<String> columnNames = [
-        'Fase_id',
-        'Edicao_id',
-        'Temporada',
-        'Nome',
-        'Nome Popular',
-        'SLug'
-      ];
-
-      List<String> propertyNames = [
-        'fase_id',
-        'edicao_id',
-        'temporada',
-        'nome',
-        'nome_popular',
-        'slug',
-      ];
+      }).toList();
 
       tableStateNotifier.value = {
-        'status': TableStatus.readyTable,
+        'status': TableStatus.readyPhase,
         'dataObjects': fasesEdicao,
-        'columnNames': columnNames,
-        'propertyNames': propertyNames,
       };
     } catch (e) {
-      tableStateNotifier.value = {'status': TableStatus.error};
+      print('Erro ao buscar dados da API: $e');
     }
   }
-
 }

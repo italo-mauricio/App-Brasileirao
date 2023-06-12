@@ -7,54 +7,49 @@ class FasesCopaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: jsonObjects.length,
-      itemBuilder: (BuildContext context, int index) {
-        var object = jsonObjects[index];
+    if (jsonObjects == null) {
+      // Exibir uma mensagem ou widget de carregamento enquanto aguarda os dados da API
+      return CircularProgressIndicator();
+    }
 
-        String faseId = object['fase_id'].toString();
-        String nome = object['nome'];
-        String tipo = object['tipo'];
-        String proximaFaseNome = object['proxima_fase']['nome'];
+    // Encontre a fase atual com base em alguma lógica
+    int faseAtualIndex = 0; // Exemplo: A primeira fase é considerada a fase atual
 
-        List<Map<String, dynamic>> confrontos = object['confrontos'];
+    var faseAtual = jsonObjects[faseAtualIndex];
+    String faseId = faseAtual['fase_id'].toString();
+    String nome = faseAtual['nome'];
+    String tipo = faseAtual['tipo'];
+    String proximaFaseNome = faseAtual['proxima_fase_nome'];
 
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Fase ID: $faseId'),
-                Text('Nome: $nome'),
-                Text('Tipo: $tipo'),
-                Text('Próxima Fase: $proximaFaseNome'),
-                SizedBox(height: 8),
-                Text('Confrontos:', style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 8),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: confrontos.length,
-                  itemBuilder: (context, index) {
-                    var confronto = confrontos[index];
-                    String time1 = confronto['time1'];
-                    String time2 = confronto['time2'];
-                    String resultado = confronto['resultado'];
+    List<Map<String, dynamic>> confrontos = faseAtual['confrontos'];
 
-                    return ListTile(
-                      title: Text('$time1 vs $time2'),
-                      subtitle: Text('Resultado: $resultado'),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Fase ID: $faseId'),
+        Text('Nome: $nome'),
+        Text('Tipo: $tipo'),
+        Text('Próxima Fase: $proximaFaseNome'),
+        const SizedBox(height: 8),
+        Text('Confrontos:', style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: confrontos.length,
+          itemBuilder: (context, index) {
+            var confronto = confrontos[index];
+            String time1 = confronto['time1'];
+            String time2 = confronto['time2'];
+            String resultado = confronto['resultado'];
+
+            return ListTile(
+              title: Text('$time1 vs $time2'),
+              subtitle: Text('Resultado: $resultado'),
+            );
+          },
+        ),
+      ],
     );
   }
 }
-
-
