@@ -6,8 +6,6 @@ import '../controllers/BrasileiraoController.dart';
 import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
 
-var dataService = DataService();
-
 class MyApp extends StatelessWidget {
   final VoidCallback logoutCallback;
 
