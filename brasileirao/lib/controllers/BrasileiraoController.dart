@@ -15,6 +15,8 @@ enum TableStatus {
   error
 }
 
+enum DescripitonStatus { idle, loading, ready, error }
+
 class DataService {
   final ValueNotifier<Map<String, dynamic>> tableStateNotifier = ValueNotifier({
     'status': TableStatus.idle,
@@ -22,6 +24,9 @@ class DataService {
     'columnNames': [],
     'propertyNames': []
   });
+  final ValueNotifier<Map<String, dynamic>> descriptionNotifier =
+      ValueNotifier({'status': DescripitonStatus.loading, 'data': {}});
+
   late int rodada;
 
   void chamarApi(index) {
@@ -58,14 +63,13 @@ class DataService {
             'time_visitante': p["time_visitante"]["escudo"],
             'data': p["data_realizacao"],
             'hora': p["hora_realizacao"],
-            'local': p["estadio"]["nome_popular"],
-            'partida':p["partida_id"]
+            'partida': p["partida_id"]
           };
         }).toList();
         tableStateNotifier.value = {
           'status': TableStatus.readyMatches,
           'dataObjects': matchesJson,
-          'utils': rodada
+          'utils': rodada,
         };
       } catch (e) {
         print(e);
@@ -76,7 +80,6 @@ class DataService {
       tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
-  
 
   Future<void> partidasR(int rodadas) async {
     var key = auths();
@@ -96,7 +99,7 @@ class DataService {
           'time_visitante': p["time_visitante"]["escudo"],
           'data': p["data_realizacao"],
           'hora': p["hora_realizacao"],
-          'local': p["estadio"]["nome_popular"]
+          'partida': p["partida_id"]
         };
       }).toList();
       tableStateNotifier.value = {
@@ -107,6 +110,35 @@ class DataService {
     } catch (e) {
       print(e);
       tableStateNotifier.value = {'status': TableStatus.error};
+    }
+  }
+
+  Future<void> descricaoPartidas(int partidaId) async {
+    var key = auths();
+    var recDescription = Uri(
+        scheme: 'https',
+        host: 'api.api-futebol.com.br',
+        path: '/v1/partidas/$partidaId');
+    try {
+      descriptionNotifier.value = {
+        'status': DescripitonStatus.loading
+      };
+      var descriptionString =
+          await http.read(recDescription, headers: {'Authorization': key});
+      Map<String, dynamic> p = jsonDecode(descriptionString);
+      final descriptionJson = {
+        'status': p["status"],
+        'local': p["estadio"]["nome_popular"],
+        'gols_m': p["gols"]["mandante"],
+        'gols_v': p["gols"]["visitante"],
+      };
+      descriptionNotifier.value = {
+        'status': DescripitonStatus.ready,
+        'data': descriptionJson,
+      };
+    } catch (e) {
+      print(e);
+      descriptionNotifier.value = {'status': DescripitonStatus.error};
     }
   }
 
@@ -172,3 +204,5 @@ class DataService {
     }
   }
 }
+
+final dataService = DataService();
