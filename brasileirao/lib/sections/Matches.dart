@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../sections/matchesDescriptions.dart';
+import 'DescriptionsMatches.dart';
+
 class MatchesWidget extends StatefulWidget {
   final List jsonObjects;
-
+  
   MatchesWidget({Key? key, required this.jsonObjects}) : super(key: key);
 
   @override
@@ -65,7 +66,7 @@ class _MatchesWidgetState extends State<MatchesWidget> {
             ),
           ),
           subtitle: selectedMatchIndex == index
-              ? const DescriptionMathces(DescriptionJsonObject: [])
+              ? Description(id: widget.jsonObjects[index]["partida"])
               : null,
         );
       },
