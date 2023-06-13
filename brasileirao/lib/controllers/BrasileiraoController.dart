@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../sections/ChaviamentoCopa.dart';
+import 'package:brasileirao/sections/Table.dart';
 import '../utils/keysAuth.dart';
 
 enum TableStatus {
@@ -217,60 +218,61 @@ class DataService {
           await http.read(recFasesCopa, headers: {'Authorization': key});
       var tabelaJson = jsonDecode(jsonString);
 
-      // Transforma toda a tabela de classificação em uma lista dynamic
-      List<dynamic> fasesCopaBrasil = tabelaJson as List<dynamic>;
+      // Acessa a lista de fases da Copa do Brasil
+      List<dynamic> fasesCopaBrasil = tabelaJson['fases'];
 
       // Cria uma lista de Map para armazenar as informações tratadas
       List<Map<String, dynamic>> times = [];
       fasesCopaBrasil.forEach((item) {
         int faseId = item['fase_id'];
-        int fases = item['fases'];
-        Map<String, dynamic> timeInfo = item['fases'];
-        String nomePopular = timeInfo['nome_popular'];
-        String nome = timeInfo['nome'];
-        String slug = timeInfo['slug'];
-        String chave = timeInfo['chaves'];
+        String nomePopular = item['nome_popular'];
+        String nome = item['nome'];
+        String temporada = item['edicao']['temporada'];
+        String slug = item['slug'];
+
+        // Acessa as informações dos confrontos
+        List<dynamic> confrontos = item['chaves'];
+        List<String> chaves =
+            confrontos.map<String>((confronto) => confronto['_link']).toList();
+
         Map<String, dynamic> timeData = {
-          'fase': fases.toString(),
           'fase_id': faseId.toString(),
           'nome_popular': nomePopular,
           'nome': nome,
           'slug': slug,
-          'chaves': chave
+          'chaves': chaves
         };
         times.add(timeData);
       });
 
       List<String> columnNames = [
-        'Fase_id',
-        'Edicao_id',
+        'Fase ID',
         'Nome Popular',
         'Nome',
+        'Temporada',
         'Slug',
         'Chaves'
       ];
 
       List<String> propertyNames = [
         'fase_id',
-        'edicao_id',
         'nome_popular',
         'nome',
+        'temporada',
         'slug',
         'chaves'
       ];
 
-        tableStateNotifier.value = {
-          'status': TableStatus.readyPhase,
-          'dataObjects': times,
-          'columnNames': columnNames,
-          'propertyNames': propertyNames,
-        };
+      tableStateNotifier.value = {
+        'status': TableStatus.readyPhase,
+        'dataObjects': times,
+        'columnNames': columnNames,
+        'propertyNames': propertyNames,
+      };
     } catch (e) {
-      // Em caso de erro, atualiza o estado do controlador para refletir o status de erro
-        tableStateNotifier.value = {'status': TableStatus.error};
-
+      tableStateNotifier.value = {'status': TableStatus.error};
     }
-}
+  }
 }
 
 final dataService = DataService();
