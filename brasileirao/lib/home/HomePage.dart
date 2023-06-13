@@ -5,7 +5,7 @@ import '../components/Drawer.dart';
 import '../controllers/BrasileiraoController.dart';
 import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
-import 'package:brasileirao/sections/FaseCopaBrasil.dart';
+
 
 class MyApp extends StatelessWidget {
   final VoidCallback logoutCallback;

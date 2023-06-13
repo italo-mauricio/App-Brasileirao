@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../sections/ChaviamentoCopa.dart';
 import '../utils/keysAuth.dart';
 
 enum TableStatus {
@@ -31,7 +32,7 @@ class DataService {
   late int rodada;
 
   void chamarApi(index) {
-    final requisicoes = [tabela, partidas, print, print];
+    final requisicoes = [tabela, partidas, chaviamento, print];
     tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
   }
@@ -121,9 +122,7 @@ class DataService {
         host: 'api.api-futebol.com.br',
         path: '/v1/partidas/$partidaId');
     try {
-      descriptionNotifier.value = {
-        'status': DescripitonStatus.loading
-      };
+      descriptionNotifier.value = {'status': DescripitonStatus.loading};
       var descriptionString =
           await http.read(recDescription, headers: {'Authorization': key});
       Map<String, dynamic> p = jsonDecode(descriptionString);
@@ -205,43 +204,73 @@ class DataService {
     }
   }
 
-  Future<void> fetchFasesCopa() async {
-    var key = auths(); // Insira sua chave de API aqui
-    var recFases = Uri(
+  Future<void> chaviamento() async {
+    var key = auths();
+    var recFasesCopa = Uri(
       scheme: 'https',
       host: 'api.api-futebol.com.br',
       path: 'v1/campeonatos/2/fases',
     );
+
     try {
       var jsonString =
-          await http.read(recFases, headers: {'Authorization': key});
+          await http.read(recFasesCopa, headers: {'Authorization': key});
       var tabelaJson = jsonDecode(jsonString);
 
-      List<dynamic> fasesCopaBrasil = tabelaJson;
+      // Transforma toda a tabela de classificação em uma lista dynamic
+      List<dynamic> fasesCopaBrasil = tabelaJson as List<dynamic>;
 
-      List<Map<String, dynamic>> fasesEdicao = fasesCopaBrasil.map((item) {
+      // Cria uma lista de Map para armazenar as informações tratadas
+      List<Map<String, dynamic>> times = [];
+      fasesCopaBrasil.forEach((item) {
         int faseId = item['fase_id'];
-        String nome = item['nome'];
-        String tipo = item['tipo'];
-        String proximaFaseNome =
-            item['proxima_fase'] != null ? item['proxima_fase']['nome'] : '';
-
-        return {
-          'fase_id': faseId,
+        int fases = item['fases'];
+        Map<String, dynamic> timeInfo = item['fases'];
+        String nomePopular = timeInfo['nome_popular'];
+        String nome = timeInfo['nome'];
+        String slug = timeInfo['slug'];
+        String chave = timeInfo['chaves'];
+        Map<String, dynamic> timeData = {
+          'fase': fases.toString(),
+          'fase_id': faseId.toString(),
+          'nome_popular': nomePopular,
           'nome': nome,
-          'tipo': tipo,
-          'proxima_fase_nome': proximaFaseNome,
+          'slug': slug,
+          'chaves': chave
         };
-      }).toList();
+        times.add(timeData);
+      });
 
-      tableStateNotifier.value = {
-        'status': TableStatus.readyPhase,
-        'dataObjects': fasesEdicao,
-      };
+      List<String> columnNames = [
+        'Fase_id',
+        'Edicao_id',
+        'Nome Popular',
+        'Nome',
+        'Slug',
+        'Chaves'
+      ];
+
+      List<String> propertyNames = [
+        'fase_id',
+        'edicao_id',
+        'nome_popular',
+        'nome',
+        'slug',
+        'chaves'
+      ];
+
+        tableStateNotifier.value = {
+          'status': TableStatus.readyPhase,
+          'dataObjects': times,
+          'columnNames': columnNames,
+          'propertyNames': propertyNames,
+        };
     } catch (e) {
-      print('Erro ao buscar dados da API: $e');
+      // Em caso de erro, atualiza o estado do controlador para refletir o status de erro
+        tableStateNotifier.value = {'status': TableStatus.error};
+
     }
-  }
+}
 }
 
 final dataService = DataService();
