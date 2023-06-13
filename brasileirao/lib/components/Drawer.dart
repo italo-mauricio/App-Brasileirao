@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:brasileirao/controllers/BrasileiraoController.dart';
 
-import '../home/HomePage.dart';
-
-
 class DrawerApp extends StatelessWidget {
   final VoidCallback logoutCallback;
 
@@ -11,7 +8,7 @@ class DrawerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color primaryColor = Color.fromRGBO(35, 131, 51, 1.0);
+    const Color primaryColor = Color.fromRGBO(35, 131, 51, 1.0);
 
     return Drawer(
       child: Column(
@@ -25,7 +22,7 @@ class DrawerApp extends StatelessWidget {
                 ),
                 accountName: const Text('Usuário'),
                 accountEmail: const Text('usuariobrasileirao@gmail.com'),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: primaryColor,
                 ),
               ),

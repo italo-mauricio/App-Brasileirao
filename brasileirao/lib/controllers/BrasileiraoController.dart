@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../sections/ChaviamentoCopa.dart';
+import 'package:brasileirao/sections/Table.dart';
 import '../utils/keysAuth.dart';
 
 enum TableStatus {
@@ -12,6 +14,7 @@ enum TableStatus {
   readyRound,
   readyPlayers,
   readyMatches,
+  readyPhase,
   error
 }
 
@@ -30,8 +33,7 @@ class DataService {
   late int rodada;
 
   void chamarApi(index) {
-    final requisicoes = [tabela, partidas, print, fasesCopa];
-
+    final requisicoes = [tabela, partidas, chaviamento, fasesCopa];
     tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
   }
@@ -48,7 +50,6 @@ class DataService {
           await http.read(recRodada, headers: {'Authorization': key});
       dynamic partidasJson = jsonDecode(jsonString);
       rodada = partidasJson["rodada_atual"]["rodada"];
-      print(rodada);
       var recPartidas = Uri(
           scheme: 'https',
           host: 'api.api-futebol.com.br',
@@ -122,9 +123,7 @@ class DataService {
         host: 'api.api-futebol.com.br',
         path: '/v1/partidas/$partidaId');
     try {
-      descriptionNotifier.value = {
-        'status': DescripitonStatus.loading
-      };
+      descriptionNotifier.value = {'status': DescripitonStatus.loading};
       var descriptionString =
           await http.read(recDescription, headers: {'Authorization': key});
       Map<String, dynamic> p = jsonDecode(descriptionString);
@@ -206,8 +205,77 @@ class DataService {
     }
   }
 
+  Future<void> chaviamento() async {
+    var key = auths();
+    var recFasesCopa = Uri(
+      scheme: 'https',
+      host: 'api.api-futebol.com.br',
+      path: 'v1/campeonatos/2/fases',
+    );
 
-  Future<void> fasesCopa() async {
+    try {
+      var jsonString =
+          await http.read(recFasesCopa, headers: {'Authorization': key});
+      var tabelaJson = jsonDecode(jsonString);
+
+      // Acessa a lista de fases da Copa do Brasil
+      List<dynamic> fasesCopaBrasil = tabelaJson['fases'];
+
+      // Cria uma lista de Map para armazenar as informações tratadas
+      List<Map<String, dynamic>> times = [];
+      fasesCopaBrasil.forEach((item) {
+        int faseId = item['fase_id'];
+        String nomePopular = item['nome_popular'];
+        String nome = item['nome'];
+        String temporada = item['edicao']['temporada'];
+        String slug = item['slug'];
+
+        // Acessa as informações dos confrontos
+        List<dynamic> confrontos = item['chaves'];
+        List<String> chaves =
+            confrontos.map<String>((confronto) => confronto['_link']).toList();
+
+        Map<String, dynamic> timeData = {
+          'fase_id': faseId.toString(),
+          'nome_popular': nomePopular,
+          'nome': nome,
+          'slug': slug,
+          'chaves': chaves
+        };
+        times.add(timeData);
+      });
+
+      List<String> columnNames = [
+        'Fase ID',
+        'Nome Popular',
+        'Nome',
+        'Temporada',
+        'Slug',
+        'Chaves'
+      ];
+
+      List<String> propertyNames = [
+        'fase_id',
+        'nome_popular',
+        'nome',
+        'temporada',
+        'slug',
+        'chaves'
+      ];
+
+      tableStateNotifier.value = {
+        'status': TableStatus.readyPhase,
+        'dataObjects': times,
+        'columnNames': columnNames,
+        'propertyNames': propertyNames,
+      };
+    } catch (e) {
+      tableStateNotifier.value = {'status': TableStatus.error};
+    }
+  }
+
+
+    Future<void> fasesCopa() async {
     var key = auths();
 
     var recFasesCopa = Uri(
