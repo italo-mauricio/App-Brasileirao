@@ -30,7 +30,7 @@ class DataService {
   late int rodada;
 
   void chamarApi(index) {
-    final requisicoes = [tabela, partidas, chaveamento, print];
+    final requisicoes = [tabela, partidas, print, fasesCopa];
 
     tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
@@ -48,6 +48,7 @@ class DataService {
           await http.read(recRodada, headers: {'Authorization': key});
       dynamic partidasJson = jsonDecode(jsonString);
       rodada = partidasJson["rodada_atual"]["rodada"];
+      print(rodada);
       var recPartidas = Uri(
           scheme: 'https',
           host: 'api.api-futebol.com.br',
@@ -206,82 +207,50 @@ class DataService {
   }
 
 
+  Future<void> fasesCopa() async {
+    var key = auths();
 
-Future<void> chaveamento() async {
-  var key = auths();
-  var recChaveamento = Uri(
-    scheme: 'https',
-    host: 'api.api-futebol.com.br',
-    path: 'v1/campeonatos/2',
-  );
+    var recFasesCopa = Uri(
+        scheme: 'https',
+        host: 'api.api-futebol.com.br',
+        path: 'v1/campeonatos/2');
 
-  try {
-    var jsonString = await http.read(recChaveamento, headers: {'Authorization': key});
-    var fasesJson = jsonDecode(jsonString);
-    var fases = fasesJson['fases'];
+    try {
+      var jsonString =
+          await http.read(recFasesCopa, headers: {'Authorization': key});
+      dynamic partidasJson = jsonDecode(jsonString);
+      int fase = partidasJson["fase_atual"]["fase_id"];
 
-    List<Map<String, dynamic>> rodadas = [];
-
-    if (fases != null && fases.isNotEmpty) {
-      // Procurar a fase "Quartas de Final"
-      var quartasDeFinal = fases.firstWhere((fase) => fase['nome'] == 'Quartas de Final', orElse: () => null);
-      if (quartasDeFinal != null) {
-        var chaves = quartasDeFinal['fase_id'];
-
-        for (var chave in chaves) {
-          var partidas = chave['partidas'];
-
-          for (var partida in partidas) {
-            var status = partida['status'];
-            if (status != 'agendado') continue;
-
-            var timeMandante = partida['time_mandante'];
-            var timeVisitante = partida['time_visitante'];
-            var estadio = partida['estadio'];
-
-            var placar = partida['placar'];
-            var nomeMandante = timeMandante['nome'];
-            var nomeVisitante = timeVisitante['nome'];
-            var escudoMandante = timeMandante['escudo'];
-            var escudoVisitante = timeVisitante['escudo'];
-            var nomeEstadio = estadio['nome'];
-
-            var rodadaData = {
-              'placar': placar,
-              'nome_mandante': nomeMandante,
-              'escudo_mandante': escudoMandante,
-              'nome_visitante': nomeVisitante,
-              'escudo_visitante': escudoVisitante,
-              'nome_estadio': nomeEstadio,
-            };
-
-            rodadas.add(rodadaData);
-          }
-        }
+      var recFasesCopa2 = Uri(
+          scheme: 'https',
+          host: 'api.api-futebol.com.br',
+          path: 'v1/campeonatos/2/fases/$fase');
+      try {
+        var matchesString =
+            await http.read(recFasesCopa2, headers: {'Authorization': key});
+        List matchesJson = jsonDecode(matchesString)["edicao"].map((p) {
+          return {
+            'nome': p["nome"],
+            'fase': p["temporada"],
+            'status': p["edicao_id"],
+          };
+        }).toList();
+        tableStateNotifier.value = {
+          'status': TableStatus.readyMatches,
+          'dataObjects': matchesJson,
+          'utils': rodada,
+        };
+      } catch (e) {
+        print("oia jegue");
+        print(e);
+        tableStateNotifier.value = {'status': TableStatus.error};
       }
-    }
-
-    if (rodadas.isNotEmpty) {
-      tableStateNotifier.value = {
-        'status': TableStatus.ready,
-        'dataObjects': rodadas,
-        'columnNames': ['Placar', 'Mandante', 'Visitante', 'Estádio'],
-        'propertyNames': ['placar', 'nome_mandante', 'nome_visitante', 'nome_estadio'],
-      };
-    } else {
-      print('Nenhuma rodada encontrada');
-      print('JSON: $jsonString');
+    } catch (e) {
+      print("oia jumento");
+      print(e);
       tableStateNotifier.value = {'status': TableStatus.error};
     }
-  } catch (e) {
-    print('Erro ao obter o chaveamento: $e');
-    tableStateNotifier.value = {'status': TableStatus.error};
   }
-}
-
-
-
-
 
 }
 
