@@ -41,6 +41,13 @@ class _TableWidgetState extends State<TableWidget> {
 
     return Column(
       children: [
+        Text(
+          'Tabela Brasileirão Série A',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
