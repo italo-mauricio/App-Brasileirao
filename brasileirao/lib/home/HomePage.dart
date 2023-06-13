@@ -91,7 +91,7 @@ class MyBody extends StatelessWidget {
                         iconSize: 30,
                         icon: const Icon(Icons.chevron_left_sharp),
                         onPressed: (() {
-                          dataService.partidasR(dataService.rodada--);
+                          dataService.partidaAnterior();
                         })),
                     Text("Rodada: ${dataService.rodada}",
                         style: const TextStyle(
@@ -100,7 +100,7 @@ class MyBody extends StatelessWidget {
                       iconSize: 30,
                       icon: const Icon(Icons.chevron_right_sharp),
                       onPressed: (() {
-                        dataService.partidasR(dataService.rodada++);
+                        dataService.partidaPosterior();
                       }),
                     ),
                   ],
