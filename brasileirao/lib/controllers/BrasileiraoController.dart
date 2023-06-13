@@ -25,9 +25,12 @@ class DataService {
     'propertyNames': []
   });
   final ValueNotifier<Map<String, dynamic>> descriptionNotifier =
-      ValueNotifier({'status': DescripitonStatus.loading, 'data': {}});
+      ValueNotifier({'status': DescripitonStatus.idle, 'data': { 'partidaId': -1 }});
 
   late int rodada;
+  int _selectedPartidaId = -1;
+
+  get selectedPartidaId => _selectedPartidaId;
 
   void chamarApi(index) {
     final requisicoes = [tabela, partidas, print, print];
@@ -81,7 +84,19 @@ class DataService {
     }
   }
 
-  Future<void> partidasR(int rodadas) async {
+  void partidaAnterior() {
+    rodada--;
+    _selectedPartidaId = -1;
+    partidasR();
+  }
+
+  void partidaPosterior() {
+    rodada++;
+    _selectedPartidaId = -1;
+    partidasR();
+  }
+
+  Future<void> partidasR() async {
     var key = auths();
     var recPartidas = Uri(
         scheme: 'https',
@@ -114,19 +129,20 @@ class DataService {
   }
 
   Future<void> descricaoPartidas(int partidaId) async {
+    _selectedPartidaId = partidaId;
+
     var key = auths();
     var recDescription = Uri(
         scheme: 'https',
         host: 'api.api-futebol.com.br',
         path: '/v1/partidas/$partidaId');
     try {
-      descriptionNotifier.value = {
-        'status': DescripitonStatus.loading
-      };
+      descriptionNotifier.value = {'status': DescripitonStatus.loading};
       var descriptionString =
           await http.read(recDescription, headers: {'Authorization': key});
       Map<String, dynamic> p = jsonDecode(descriptionString);
       final descriptionJson = {
+        'partidaId': partidaId, 
         'status': p["status"],
         'local': p["estadio"]["nome_popular"],
         'gols_m': p["gols"]["mandante"],
