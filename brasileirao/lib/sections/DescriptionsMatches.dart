@@ -25,20 +25,20 @@ class Description extends HookWidget {
       case DescripitonStatus.ready:
         final textsGolsM = value['data']["gols_m"]
             .map<Widget>((gol) => Text(
-                "Autor do Gol: ${gol["atleta"]["nome_popular"]}\nTempo: ${gol["minuto"]}\nPeriodo: ${gol["periodo"]}"))
-            .toList();
+                "Autor do Gol: ${gol["atleta"]["nome_popular"]?? "..."}\nTempo: ${gol["minuto"]?? "..."}\nPeriodo: ${gol["periodo"]?? "..."}"))
+            .toList()?? "...";
 
         final textsGolsV = value['data']["gols_v"]
             .map<Widget>((gol) => Text(
-                "Autor do Gol: ${gol["atleta"]["nome_popular"]}\nTempo: ${gol["minuto"]}\nPeriodo: ${gol["periodo"]}"))
-            .toList();
+                "Autor do Gol: ${gol["atleta"]["nome_popular"]}\nTempo: ${gol["minuto"]?? "..."}\nPeriodo: ${gol["periodo"]?? "..."}"))
+            .toList()?? "...";
         return Column(
           children: [
             Text("${value['data']["status"]}"),
             Text("Local: ${value['data']["local"]}"),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Column(children: textsGolsM),
-              Column(children: textsGolsV)
+              Column(children: textsGolsM?? const Text("")),
+              Column(children: textsGolsV?? const Text(""))
             ]),
           ],
         );
