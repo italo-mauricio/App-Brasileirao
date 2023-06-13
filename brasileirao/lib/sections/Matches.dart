@@ -10,15 +10,13 @@ class MatchesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final selectedMatchIndex = useState<int>(-1);
-
+    
     return ListView.builder(
       itemCount: jsonObjects.length,
       itemBuilder: (BuildContext context, int index) {
         final partidaId = jsonObjects[index]["partida"];
         return ListTile(
           onTap: () {
-            //selectedMatchIndex.value = index;
             dataService.descricaoPartidas(partidaId);
           },
           title: Padding(
@@ -43,9 +41,8 @@ class MatchesWidget extends StatelessWidget {
                       jsonObjects[index]["placar"],
                       style: const TextStyle(fontSize: 18),
                     ),
-                    Text(jsonObjects[index]["data"] +
-                        " " +
-                        jsonObjects[index]["hora"]),
+                    Text(
+                        "Data: ${jsonObjects[index]["data"]}\tHora: ${jsonObjects[index]["hora"]}"),
                   ],
                 ),
                 Column(
@@ -63,10 +60,9 @@ class MatchesWidget extends StatelessWidget {
             ),
           ),
           subtitle: ValueListenableBuilder(
-                  valueListenable: dataService.descriptionNotifier,
-                  builder: (context, value, child) =>
-                      Description(id: partidaId, value: value)),
-          
+              valueListenable: dataService.descriptionNotifier,
+              builder: (context, value, child) =>
+                  Description(id: partidaId, value: value)),
         );
       },
     );
