@@ -25,17 +25,17 @@ class Description extends HookWidget {
       case DescripitonStatus.ready:
         final textsGolsM = value['data']["gols_m"]
             .map<Widget>((gol) => Text(
-                "Autor do Gol: ${gol["atleta"]["nome_popular"]?? "..."}\nTempo: ${gol["minuto"]?? "..."}\nPeriodo: ${gol["periodo"]?? "..."}"))
+                "Autor do Gol: ${gol["atleta"]["nome_popular"]?? " Indisponivel no momento"}\nTempo: ${gol["minuto"]?? " Indisponivel no momento"}\nPeriodo: ${gol["periodo"]?? " Indisponivel no momento"}"))
             .toList()?? "...";
 
         final textsGolsV = value['data']["gols_v"]
             .map<Widget>((gol) => Text(
-                "Autor do Gol: ${gol["atleta"]["nome_popular"]}\nTempo: ${gol["minuto"]?? "..."}\nPeriodo: ${gol["periodo"]?? "..."}"))
+                "Autor do Gol: ${gol["atleta"]["nome_popular"]?? " Indisponivel no momento"}\nTempo: ${gol["minuto"]?? " Indisponivel no momento"}\nPeriodo: ${gol["periodo"]?? " Indisponivel no momento"}"))
             .toList()?? "...";
         return Column(
           children: [
-            Text("${value['data']["status"]}"),
-            Text("Local: ${value['data']["local"]}"),
+            Text("${value['data']["status"]?? " Indisponivel no momento"}"),
+            Text("Local: ${value['data']["local"]?? " Indisponivel no momento"}"),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Column(children: textsGolsM?? const Text("")),
               Column(children: textsGolsV?? const Text(""))
