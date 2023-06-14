@@ -1,4 +1,10 @@
-<h1 align="center">Aplicativo Brasileirão Max</h1>
+<div align="center">
+<h1>Aplicativo Brasileirão Max</h1>
+ <div>
+  <img src="https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white"/>
+ <img src="https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white"/>
+</div>
+</div>
 
 ## Informações Gerais
 
@@ -11,9 +17,9 @@
 
 ## Introdução ao Projeto
 
-Bem-vindo(a) ao Brasileirão Max projeto desenvolvido em Flutter/Dart! Este aplicativo foi criado com o objetivo de fornecer informações sobre o Campeonato Brasileiro de Futebol, como partidas, classificação e artilheiros, por meio da integração com uma [API](https://api-futebol.com.br/) de futebol.
+Bem-vindo(a) ao Brasileirão Max projeto desenvolvido em Flutter/Dart! Este aplicativo foi criado com o objetivo de fornecer informações sobre o campeonato brasileiro de futebol e a copa do Brasil de futebol, como partidas e classificação, por meio da integração com uma [API](https://api-futebol.com.br/) de futebol.
 
-O aplicativo para Android e IOS, desenvolvido em Flutter e utilizando toda a potencialidade da ferramenta com o objetivo de mostrar como o Flutter lida com requisições de APIs e como o framework é robusto no desenvolvimento mobile multi-plataforma.
+O aplicativo para Android, IOS e Web, desenvolvido em Flutter e utilizando toda a potencialidade da ferramenta com o objetivo de mostrar como o Flutter lida com requisições de APIs e como o framework é robusto no desenvolvimento mobile multi-plataforma e Web.
 
 ## Como executar:
 
@@ -23,7 +29,7 @@ O aplicativo para Android e IOS, desenvolvido em Flutter e utilizando toda a pot
     
 * Passo 2:
 
-      Entre na pasta do projeto utilizando o comando "cd".
+      Entre na pasta do projeto utilizando o comando "cd brasileirao".
       
 * Passo 3:
       
@@ -32,11 +38,6 @@ O aplicativo para Android e IOS, desenvolvido em Flutter e utilizando toda a pot
 * Passo 4:
 
       Utilize o comando "flutter run -d (seu navegador de preferência) --web-renderer html".
-      
-* Passo 5:
-
-      Escolha o dispositivo que você deseja rodar.
-      
 
 ## Bibliotecas Dart Utilizadas:
 
@@ -48,12 +49,6 @@ O aplicativo para Android e IOS, desenvolvido em Flutter e utilizando toda a pot
 
 :ballot_box_with_check: [Convert](https://api.dart.dev/stable/3.0.3/dart-convert/dart-convert-library.html): Essa biblioteca fornece funções para codificar e decodificar dados em formatos como JSON. Ela oferece métodos para converter objetos Dart em strings codificadas e vice-versa, facilitando a comunicação com APIs que utilizam JSON como formato de dados. 
 
-## Tecnologias Utilizadas:
-
-<p align="center">
-    <img src="https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white"/>
-    <img src="https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white"/>
-</p>
 
 ### Descrição das tecnologias:
 
