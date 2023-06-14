@@ -44,6 +44,19 @@ class DataService {
     requisicoes[index]();
   }
 
+  void partidaAnterior() {
+    rodada--;
+    _selectedPartidaId = -1;
+    partidasR();
+  }
+
+  void partidaPosterior() {
+    rodada ++;
+    _selectedPartidaId = -1;
+    partidasR();
+  }
+
+
   Future<void> partidas() async {
     var key = auths();
     var recRodada = Uri(
@@ -88,18 +101,6 @@ class DataService {
       print(e);
       tableStateNotifier.value = {'status': TableStatus.error};
     }
-  }
-
-  void partidaAnterior() {
-    rodada--;
-    _selectedPartidaId = -1;
-    partidasR();
-  }
-
-  void partidaPosterior() {
-    rodada += 5;
-    _selectedPartidaId = -1;
-    partidasR();
   }
 
   Future<void> partidasR() async {
