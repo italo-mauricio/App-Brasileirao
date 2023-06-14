@@ -6,6 +6,7 @@ import '../controllers/BrasileiraoController.dart';
 import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
 
+
 class MyApp extends StatelessWidget {
   final VoidCallback logoutCallback;
 
@@ -110,6 +111,8 @@ class MyBody extends StatelessWidget {
             ]);
           case TableStatus.readyTable:
             return TableWidget(jsonObjects: value['dataObjects']);
+          case TableStatus.readyPhase:
+            return Text("$value['dataObjects']");
           case TableStatus.error:
             return const Center(
                 child: Text("Aconteceu um imprevisto, chame o DevOps"));
