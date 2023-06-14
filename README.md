@@ -39,6 +39,40 @@ O aplicativo para Android, IOS e Web, desenvolvido em Flutter e utilizando toda 
 
       Utilize o comando "flutter run -d (seu navegador de preferência) --web-renderer html".
 
+## Estrutura do projeto
+```
+App-Brasileirao
+├─ brasileirao
+│  ├─ lib
+│  │  ├─ assets
+│  │  │  ├─ Fontes.dart
+│  │  │  ├─ fundo.jpeg
+│  │  │  ├─ fundo1.jpg
+│  │  │  ├─ Images.dart
+│  │  │  ├─ logo.png
+│  │  │  ├─ logo1.png
+│  │  │  ├─ logo_campeonato.png
+│  │  │  └─ logo_vintage.png
+│  │  ├─ components
+│  │  │  └─ Drawer.dart
+│  │  ├─ controllers
+│  │  │  └─ BrasileiraoController.dart
+│  │  ├─ home
+│  │  │  └─ HomePage.dart
+│  │  ├─ login
+│  │  │  └─ LoginPage.dart
+│  │  ├─ main.dart
+│  │  ├─ routes
+│  │  │  └─ InitialApp.dart
+│  │  ├─ sections
+│  │  │  ├─ ChaviamentoCopa.dart
+│  │  │  ├─ DataTable.dart
+│  │  │  ├─ DescriptionsMatches.dart
+│  │  │  ├─ Matches.dart
+│  │  │  └─ Table.dart
+│  │  └─ utils
+│  │     └─ keysAuth.dart
+```
 ## Bibliotecas Dart Utilizadas:
 
 :ballot_box_with_check: [Material](https://api.flutter.dev/flutter/material/MaterialApp-class.html): Essa biblioteca contém widgets e recursos específicos para o design de interface do usuário no estilo Material Design, como AppBar, botões, caixas de texto e navegação entre telas.
