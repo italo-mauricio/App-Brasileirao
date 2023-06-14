@@ -28,15 +28,34 @@ class DataService {
     'propertyNames': []
   });
   final ValueNotifier<Map<String, dynamic>> descriptionNotifier =
-      ValueNotifier({'status': DescripitonStatus.loading, 'data': {}});
+      ValueNotifier({
+    'status': DescripitonStatus.idle,
+    'data': {'partidaId': -1}
+  });
 
   late int rodada;
+  int _selectedPartidaId = -1;
+
+  get selectedPartidaId => _selectedPartidaId;
 
   void chamarApi(index) {
     final requisicoes = [tabela, partidas, chaviamento, print];
     tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
   }
+
+  void partidaAnterior() {
+    rodada--;
+    _selectedPartidaId = -1;
+    partidasR();
+  }
+
+  void partidaPosterior() {
+    rodada ++;
+    _selectedPartidaId = -1;
+    partidasR();
+  }
+
 
   Future<void> partidas() async {
     var key = auths();
@@ -84,7 +103,7 @@ class DataService {
     }
   }
 
-  Future<void> partidasR(int rodadas) async {
+  Future<void> partidasR() async {
     var key = auths();
     var recPartidas = Uri(
         scheme: 'https',
@@ -96,12 +115,16 @@ class DataService {
       List matchesJson = jsonDecode(matchesString)["partidas"].map((p) {
         return {
           'placar': p["placar"],
-          'sigla_mandante': p["time_mandante"]["sigla"],
-          'time_mandante': p["time_mandante"]["escudo"],
-          'sigla_visitante': p["time_visitante"]["sigla"],
-          'time_visitante': p["time_visitante"]["escudo"],
-          'data': p["data_realizacao"],
-          'hora': p["hora_realizacao"],
+          'sigla_mandante':
+              p["time_mandante"]["sigla"] ?? "Nome Indisponivel no momento",
+          'time_mandante': p["time_mandante"]["escudo"] ??
+              "https://portal.crea-sc.org.br/wp-content/uploads/2017/11/imagem-indisponivel-para-produtos-sem-imagem_15_5.jpg",
+          'sigla_visitante':
+              p["time_visitante"]["sigla"] ?? "Nome Indisponivel no momento",
+          'time_visitante': p["time_visitante"]["escudo"] ??
+              "https://portal.crea-sc.org.br/wp-content/uploads/2017/11/imagem-indisponivel-para-produtos-sem-imagem_15_5.jpg",
+          'data': p["data_realizacao"] ?? "Indefinida",
+          'hora': p["hora_realizacao"] ?? "Indefinido",
           'partida': p["partida_id"]
         };
       }).toList();
@@ -117,6 +140,8 @@ class DataService {
   }
 
   Future<void> descricaoPartidas(int partidaId) async {
+    _selectedPartidaId = partidaId;
+
     var key = auths();
     var recDescription = Uri(
         scheme: 'https',
@@ -127,11 +152,18 @@ class DataService {
       var descriptionString =
           await http.read(recDescription, headers: {'Authorization': key});
       Map<String, dynamic> p = jsonDecode(descriptionString);
+        String local;
+         if (p["estadio"] != null) {
+             local = p["estadio"]["nome_popular"];
+         } else {
+           local = "Local Indefinido"; 
+         }
       final descriptionJson = {
-        'status': p["status"],
-        'local': p["estadio"]["nome_popular"],
-        'gols_m': p["gols"]["mandante"],
-        'gols_v': p["gols"]["visitante"],
+        'partidaId': partidaId,
+        'status': p["status"] ?? "Status Indefinido",
+        'local': local,
+        'gols_m': p["gols"]["mandante"] ?? "Gols Indefinidos",
+        'gols_v': p["gols"]["visitante"] ?? "Gols Indefinidos",
       };
       descriptionNotifier.value = {
         'status': DescripitonStatus.ready,
