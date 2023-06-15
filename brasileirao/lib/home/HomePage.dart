@@ -2,10 +2,10 @@ import 'package:brasileirao/sections/Table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../components/Drawer.dart';
-import '../controllers/BrasileiraoController.dart';
+import '../controllers/ControllerAll.dart';
 import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
-import '../sections/ChaviamentoCopa.dart';
+import '../sections/BrazilCupSwitching.dart';
 
 class MyApp extends StatelessWidget {
   final VoidCallback logoutCallback;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:brasileirao/controllers/BrasileiraoController.dart';
+import 'package:brasileirao/controllers/ControllerAll.dart';
 
 class DrawerApp extends StatelessWidget {
   final VoidCallback logoutCallback;

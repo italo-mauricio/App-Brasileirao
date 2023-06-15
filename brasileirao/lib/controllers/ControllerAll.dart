@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../sections/ChaviamentoCopa.dart';
+import '../sections/BrazilCupSwitching.dart';
 import 'package:brasileirao/sections/Table.dart';
 import '../utils/keysAuth.dart';
 
