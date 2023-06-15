@@ -34,6 +34,7 @@ class DataService {
   });
 
   late int rodada;
+  late int rodadaCup;
   int _selectedPartidaId = -1;
 
   get selectedPartidaId => _selectedPartidaId;
@@ -55,6 +56,20 @@ class DataService {
     _selectedPartidaId = -1;
     partidasR();
   }
+
+  void partidaAnteriorCup() {
+    rodadaCup--;
+    _selectedPartidaId = -1;
+    chaveamentoR();
+  }
+
+  void partidaPosteriorCup() {
+    rodadaCup++;
+    _selectedPartidaId = -1;
+    chaveamentoR();
+  }
+
+  var key = auths();
 
   Future<void> partidas() async {
     var key = auths();
@@ -237,7 +252,6 @@ class DataService {
   }
 
   Future<void> chaviamento() async {
-    var key = auths();
     var recFaseCopa = Uri(
       scheme: 'https',
       host: 'api.api-futebol.com.br',
@@ -247,13 +261,12 @@ class DataService {
     try {
       var jsonString =
           await http.read(recFaseCopa, headers: {'Authorization': key});
-      var faseJson = jsonDecode(jsonString)["fase_atual"]["fase_id"];
-      print(faseJson);
+      rodadaCup = jsonDecode(jsonString)["fase_atual"]["fase_id"];
 
       var recPartidasCopa = Uri(
         scheme: 'https',
         host: 'api.api-futebol.com.br',
-        path: 'v1/campeonatos/2/fases/$faseJson',
+        path: 'v1/campeonatos/2/fases/$rodadaCup',
       );
       try {
         var chavesString =
@@ -263,21 +276,22 @@ class DataService {
             'pote': busca["nome"],
             'idIda': busca["partida_ida"]["partida_id"],
             'idVolta': busca["partida_volta"]["partida_id"],
-            
             'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
             'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
             'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
             'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
- 
             'placarIda': busca["partida_ida"]["placar"],
             'statusIda': busca["partida_ida"]["status"],
-            'dataIda': busca["partida_ida"]["data_realizacao"] ?? "Indisponivel no momento",
-            'horarioIda': busca["partida_ida"]["hora_realizacao"] ?? "Indisponivel no momento",
-
+            'dataIda': busca["partida_ida"]["data_realizacao"] ??
+                "Indisponivel no momento",
+            'horarioIda': busca["partida_ida"]["hora_realizacao"] ??
+                "Indisponivel no momento",
             'placarVolta': busca["partida_volta"]["placar"],
             'statusVolta': busca["partida_volta"]["status"],
-            'dataVolta': busca["partida_volta"]["data_realizacao"] ?? "Indisponivel no momento",
-            'horarioVolta': busca["partida_volta"]["hora_realizacao"] ?? "Indisponivel no momento",
+            'dataVolta': busca["partida_volta"]["data_realizacao"] ??
+                "Indisponivel no momento",
+            'horarioVolta': busca["partida_volta"]["hora_realizacao"] ??
+                "Indisponivel no momento",
           };
         }).toList();
 
@@ -290,6 +304,52 @@ class DataService {
         tableStateNotifier.value = {'status': TableStatus.error};
       }
     } catch (e) {
+      tableStateNotifier.value = {'status': TableStatus.error};
+    }
+  }
+
+  Future<void> chaveamentoR() async {
+    var recPartidasCopa = Uri(
+      scheme: 'https',
+      host: 'api.api-futebol.com.br',
+      path: 'v1/campeonatos/2/fases/$rodadaCup',
+    );
+    try {
+      var chavesString =
+          await http.read(recPartidasCopa, headers: {'Authorization': key});
+      List chavesProntas = jsonDecode(chavesString)["chaves"].map((busca) {
+        return {
+          'pote': busca["nome"],
+          'idIda': busca["partida_ida"]["partida_id"],
+          'idVolta': busca["partida_volta"]["partida_id"],
+          
+          'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
+          'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
+          'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
+          'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
+
+          'placarIda': busca["partida_ida"]["placar"],
+          'statusIda': busca["partida_ida"]["status"],
+          'dataIda': busca["partida_ida"]["data_realizacao"] ??
+              "Indisponivel no momento",
+          'horarioIda': busca["partida_ida"]["hora_realizacao"] ??
+              "Indisponivel no momento",
+          
+          'placarVolta': busca["partida_volta"]["placar"],
+          'statusVolta': busca["partida_volta"]["status"],
+          'dataVolta': busca["partida_volta"]["data_realizacao"] ??
+              "Indisponivel no momento",
+          'horarioVolta': busca["partida_volta"]["hora_realizacao"] ??
+              "Indisponivel no momento",
+        };
+      }).toList();
+
+      tableStateNotifier.value = {
+        'status': TableStatus.readyPhase,
+        'dataObjects': chavesProntas
+      };
+    } catch (e) {
+      print(e);
       tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
