@@ -122,7 +122,7 @@ class MyBody extends StatelessWidget {
                         iconSize: 30,
                         icon: const Icon(Icons.chevron_left_sharp),
                         onPressed: (() {
-                          // dataService.partidaAnterior();
+                          dataService.partidaAnteriorCup();
                         })),
                     const Text("Rodada:",
                         style: TextStyle(
@@ -131,7 +131,7 @@ class MyBody extends StatelessWidget {
                       iconSize: 30,
                       icon: const Icon(Icons.chevron_right_sharp),
                       onPressed: (() {
-                        // dataService.partidaPosterior();
+                        dataService.partidaPosteriorCup();
                       }),
                     ),
                   ],
@@ -139,7 +139,6 @@ class MyBody extends StatelessWidget {
               ),
               Expanded(child: PartidasCopa(jsonObjects: value['dataObjects']))
             ]);
-            // return PartidasCopa(jsonObjects: value['dataObjects']);
           case TableStatus.error:
             return const Center(
                 child: Text("Aconteceu um imprevisto, chame o DevOps"));
