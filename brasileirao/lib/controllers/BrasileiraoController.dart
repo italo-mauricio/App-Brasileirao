@@ -47,35 +47,27 @@ class DataService {
   }
 
   void partidaAnterior() {
-    if (rodada > 1) {
     rodada--;
     _selectedPartidaId = -1;
     partidasR();
-    }
   }
 
   void partidaPosterior() {
-    if (rodada < 38) {  
     rodada++;
     _selectedPartidaId = -1;
     partidasR();
-    }
   }
 
   void partidaAnteriorCup() {
-    if (rodadaCup > 312) {  
     rodadaCup--;
     _selectedPartidaId = -1;
     chaveamentoR();
-    }
   }
 
   void partidaPosteriorCup() {
-    if (rodadaCup > 314) {
     rodadaCup++;
     _selectedPartidaId = -1;
     chaveamentoR();
-    }
   }
 
   var key = auths();
