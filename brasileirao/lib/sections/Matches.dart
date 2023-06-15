@@ -1,28 +1,23 @@
+import 'package:brasileirao/controllers/BrasileiraoController.dart';
 import 'package:flutter/material.dart';
 import 'DescriptionsMatches.dart';
+// import 'package:flutter_hooks/flutter_hooks.dart';
 
-class MatchesWidget extends StatefulWidget {
+class MatchesWidget extends StatelessWidget {
   final List jsonObjects;
-  
-  MatchesWidget({Key? key, required this.jsonObjects}) : super(key: key);
 
-  @override
-  _MatchesWidgetState createState() => _MatchesWidgetState();
-}
-
-class _MatchesWidgetState extends State<MatchesWidget> {
-  int selectedMatchIndex = -1;
+  const MatchesWidget({Key? key, required this.jsonObjects}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    
     return ListView.builder(
-      itemCount: widget.jsonObjects.length,
+      itemCount: jsonObjects.length,
       itemBuilder: (BuildContext context, int index) {
+        final partidaId = jsonObjects[index]["partida"];
         return ListTile(
           onTap: () {
-            setState(() {
-              selectedMatchIndex = index;
-            });
+            dataService.descricaoPartidas(partidaId);
           },
           title: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -32,42 +27,42 @@ class _MatchesWidgetState extends State<MatchesWidget> {
                 Column(
                   children: [
                     Image.network(
-                      widget.jsonObjects[index]["time_mandante"],
+                      jsonObjects[index]["time_mandante"],
                       width: 50,
                       height: 50,
                       fit: BoxFit.contain,
                     ),
-                    Text(widget.jsonObjects[index]["sigla_mandante"]),
+                    Text(jsonObjects[index]["sigla_mandante"]),
                   ],
                 ),
                 Column(
                   children: [
                     Text(
-                      widget.jsonObjects[index]["placar"],
+                      jsonObjects[index]["placar"],
                       style: const TextStyle(fontSize: 18),
                     ),
-                    Text(widget.jsonObjects[index]["data"] +
-                        " " +
-                        widget.jsonObjects[index]["hora"]),
+                    Text(
+                        "Data: ${jsonObjects[index]["data"]}\tHora: ${jsonObjects[index]["hora"]}"),
                   ],
                 ),
                 Column(
                   children: [
                     Image.network(
-                      widget.jsonObjects[index]["time_visitante"],
+                      jsonObjects[index]["time_visitante"],
                       width: 50,
                       height: 50,
                       fit: BoxFit.contain,
                     ),
-                    Text(widget.jsonObjects[index]["sigla_visitante"]),
+                    Text(jsonObjects[index]["sigla_visitante"]),
                   ],
                 ),
               ],
             ),
           ),
-          subtitle: selectedMatchIndex == index
-              ? Description(id: widget.jsonObjects[index]["partida"])
-              : null,
+          subtitle: ValueListenableBuilder(
+              valueListenable: dataService.descriptionNotifier,
+              builder: (context, value, child) =>
+                  Description(id: partidaId, value: value)),
         );
       },
     );

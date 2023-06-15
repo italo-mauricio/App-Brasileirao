@@ -11,6 +11,7 @@ enum TableStatus {
   loading,
   ready,
   readyTable,
+  readyFases,
   readyRound,
   readyPlayers,
   readyMatches,
@@ -28,15 +29,48 @@ class DataService {
     'propertyNames': []
   });
   final ValueNotifier<Map<String, dynamic>> descriptionNotifier =
-      ValueNotifier({'status': DescripitonStatus.loading, 'data': {}});
+      ValueNotifier({
+    'status': DescripitonStatus.idle,
+    'data': {'partidaId': -1}
+  });
 
   late int rodada;
+  late int rodadaCup;
+  int _selectedPartidaId = -1;
+
+  get selectedPartidaId => _selectedPartidaId;
 
   void chamarApi(index) {
-    final requisicoes = [tabela, partidas, chaviamento, fasesCopa];
+    final requisicoes = [tabela, partidas, print, fasesCopa];
     tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
   }
+
+  void partidaAnterior() {
+    rodada--;
+    _selectedPartidaId = -1;
+    partidasR();
+  }
+
+  void partidaPosterior() {
+    rodada++;
+    _selectedPartidaId = -1;
+    partidasR();
+  }
+
+  void partidaAnteriorCup() {
+    rodadaCup--;
+    _selectedPartidaId = -1;
+    chaveamentoR();
+  }
+
+  void partidaPosteriorCup() {
+    rodadaCup++;
+    _selectedPartidaId = -1;
+    chaveamentoR();
+  }
+
+  var key = auths();
 
   Future<void> partidas() async {
     var key = auths();
@@ -84,7 +118,7 @@ class DataService {
     }
   }
 
-  Future<void> partidasR(int rodadas) async {
+  Future<void> partidasR() async {
     var key = auths();
     var recPartidas = Uri(
         scheme: 'https',
@@ -96,12 +130,16 @@ class DataService {
       List matchesJson = jsonDecode(matchesString)["partidas"].map((p) {
         return {
           'placar': p["placar"],
-          'sigla_mandante': p["time_mandante"]["sigla"],
-          'time_mandante': p["time_mandante"]["escudo"],
-          'sigla_visitante': p["time_visitante"]["sigla"],
-          'time_visitante': p["time_visitante"]["escudo"],
-          'data': p["data_realizacao"],
-          'hora': p["hora_realizacao"],
+          'sigla_mandante':
+              p["time_mandante"]["sigla"] ?? "Nome Indisponivel no momento",
+          'time_mandante': p["time_mandante"]["escudo"] ??
+              "https://portal.crea-sc.org.br/wp-content/uploads/2017/11/imagem-indisponivel-para-produtos-sem-imagem_15_5.jpg",
+          'sigla_visitante':
+              p["time_visitante"]["sigla"] ?? "Nome Indisponivel no momento",
+          'time_visitante': p["time_visitante"]["escudo"] ??
+              "https://portal.crea-sc.org.br/wp-content/uploads/2017/11/imagem-indisponivel-para-produtos-sem-imagem_15_5.jpg",
+          'data': p["data_realizacao"] ?? "Indefinida",
+          'hora': p["hora_realizacao"] ?? "Indefinido",
           'partida': p["partida_id"]
         };
       }).toList();
@@ -117,6 +155,8 @@ class DataService {
   }
 
   Future<void> descricaoPartidas(int partidaId) async {
+    _selectedPartidaId = partidaId;
+
     var key = auths();
     var recDescription = Uri(
         scheme: 'https',
@@ -127,11 +167,18 @@ class DataService {
       var descriptionString =
           await http.read(recDescription, headers: {'Authorization': key});
       Map<String, dynamic> p = jsonDecode(descriptionString);
+      String local;
+      if (p["estadio"] != null) {
+        local = p["estadio"]["nome_popular"];
+      } else {
+        local = "Local Indefinido";
+      }
       final descriptionJson = {
-        'status': p["status"],
-        'local': p["estadio"]["nome_popular"],
-        'gols_m': p["gols"]["mandante"],
-        'gols_v': p["gols"]["visitante"],
+        'partidaId': partidaId,
+        'status': p["status"] ?? "Status Indefinido",
+        'local': local,
+        'gols_m': p["gols"]["mandante"] ?? "Gols Indefinidos",
+        'gols_v': p["gols"]["visitante"] ?? "Gols Indefinidos",
       };
       descriptionNotifier.value = {
         'status': DescripitonStatus.ready,
@@ -205,74 +252,115 @@ class DataService {
     }
   }
 
+
   Future<void> chaviamento() async {
-    var key = auths();
-    var recFasesCopa = Uri(
+    var recFaseCopa = Uri(
       scheme: 'https',
       host: 'api.api-futebol.com.br',
-      path: 'v1/campeonatos/2/fases',
+      path: 'v1/campeonatos/2/',
     );
 
     try {
       var jsonString =
-          await http.read(recFasesCopa, headers: {'Authorization': key});
-      var tabelaJson = jsonDecode(jsonString);
+          await http.read(recFaseCopa, headers: {'Authorization': key});
+      rodadaCup = jsonDecode(jsonString)["fase_atual"]["fase_id"];
 
-      // Acessa a lista de fases da Copa do Brasil
-      List<dynamic> fasesCopaBrasil = tabelaJson['fases'];
+      var recPartidasCopa = Uri(
+        scheme: 'https',
+        host: 'api.api-futebol.com.br',
+        path: 'v1/campeonatos/2/fases/$rodadaCup',
+      );
+      try {
+        var chavesString =
+            await http.read(recPartidasCopa, headers: {'Authorization': key});
+        String fase = jsonDecode(chavesString)["nome"];
+        List chavesProntas = jsonDecode(chavesString)["chaves"].map((busca) {
+          return {
+            'pote': busca["nome"],
+            'idIda': busca["partida_ida"]["partida_id"],
+            'idVolta': busca["partida_volta"]["partida_id"],
+            'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
+            'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
+            'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
+            'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
+            'placarIda': busca["partida_ida"]["placar"],
+            'statusIda': busca["partida_ida"]["status"],
+            'dataIda': busca["partida_ida"]["data_realizacao"] ??
+                "Indisponivel no momento",
+            'horarioIda': busca["partida_ida"]["hora_realizacao"] ??
+                "Indisponivel no momento",
+            'placarVolta': busca["partida_volta"]["placar"],
+            'statusVolta': busca["partida_volta"]["status"],
+            'dataVolta': busca["partida_volta"]["data_realizacao"] ??
+                "Indisponivel no momento",
+            'horarioVolta': busca["partida_volta"]["hora_realizacao"] ??
+                "Indisponivel no momento",
+          };
+        }).toList();
 
-      // Cria uma lista de Map para armazenar as informações tratadas
-      List<Map<String, dynamic>> times = [];
-      fasesCopaBrasil.forEach((item) {
-        int faseId = item['fase_id'];
-        String nomePopular = item['nome_popular'];
-        String nome = item['nome'];
-        String temporada = item['edicao']['temporada'];
-        String slug = item['slug'];
-
-        // Acessa as informações dos confrontos
-        List<dynamic> confrontos = item['chaves'];
-        List<String> chaves =
-            confrontos.map<String>((confronto) => confronto['_link']).toList();
-
-        Map<String, dynamic> timeData = {
-          'fase_id': faseId.toString(),
-          'nome_popular': nomePopular,
-          'nome': nome,
-          'slug': slug,
-          'chaves': chaves
+        tableStateNotifier.value = {
+          'status': TableStatus.readyPhase,
+          'dataObjects': chavesProntas,
+          'fase': fase
         };
-        times.add(timeData);
-      });
-
-      List<String> columnNames = [
-        'Fase ID',
-        'Nome Popular',
-        'Nome',
-        'Temporada',
-        'Slug',
-        'Chaves'
-      ];
-
-      List<String> propertyNames = [
-        'fase_id',
-        'nome_popular',
-        'nome',
-        'temporada',
-        'slug',
-        'chaves'
-      ];
-
-      tableStateNotifier.value = {
-        'status': TableStatus.readyPhase,
-        'dataObjects': times,
-        'columnNames': columnNames,
-        'propertyNames': propertyNames,
-      };
+      } catch (e) {
+        print(e);
+        tableStateNotifier.value = {'status': TableStatus.error};
+      }
     } catch (e) {
       tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
+
+  Future<void> chaveamentoR() async {
+    var recPartidasCopa = Uri(
+      scheme: 'https',
+      host: 'api.api-futebol.com.br',
+      path: 'v1/campeonatos/2/fases/$rodadaCup',
+    );
+    try {
+      var chavesString =
+          await http.read(recPartidasCopa, headers: {'Authorization': key});
+      String fase = jsonDecode(chavesString)["nome"];
+      List chavesProntas = jsonDecode(chavesString)["chaves"].map((busca) {
+        return {
+          'pote': busca["nome"],
+          'idIda': busca["partida_ida"]["partida_id"],
+          'idVolta': busca["partida_volta"]["partida_id"],
+          //
+          'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
+          'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
+          'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
+          'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
+          //
+          'placarIda': busca["partida_ida"]["placar"],
+          'statusIda': busca["partida_ida"]["status"],
+          'dataIda': busca["partida_ida"]["data_realizacao"] ??
+              "Indisponivel no momento",
+          'horarioIda': busca["partida_ida"]["hora_realizacao"] ??
+              "Indisponivel no momento",
+          //
+          'placarVolta': busca["partida_volta"]["placar"],
+          'statusVolta': busca["partida_volta"]["status"],
+          'dataVolta': busca["partida_volta"]["data_realizacao"] ??
+              "Indisponivel no momento",
+          'horarioVolta': busca["partida_volta"]["hora_realizacao"] ??
+              "Indisponivel no momento",
+        };
+      }).toList();
+
+      tableStateNotifier.value = {
+        'status': TableStatus.readyPhase,
+        'dataObjects': chavesProntas,
+        'fase': fase
+      };
+    } catch (e) {
+      print(e);
+      tableStateNotifier.value = {'status': TableStatus.error};
+    }
+  }
+
+
 
 
     Future<void> fasesCopa() async {
@@ -281,7 +369,7 @@ class DataService {
     var recFasesCopa = Uri(
         scheme: 'https',
         host: 'api.api-futebol.com.br',
-        path: 'v1/campeonatos/2');
+        path: 'v1/campeonatos/2/fases');
 
     try {
       var jsonString =
@@ -296,15 +384,10 @@ class DataService {
       try {
         var matchesString =
             await http.read(recFasesCopa2, headers: {'Authorization': key});
-        List matchesJson = jsonDecode(matchesString)["edicao"].map((p) {
-          return {
-            'nome': p["nome"],
-            'fase': p["temporada"],
-            'status': p["edicao_id"],
-          };
-        }).toList();
+        var matchesJson = jsonDecode(matchesString)["edicao"];
+        print(matchesJson);
         tableStateNotifier.value = {
-          'status': TableStatus.readyMatches,
+          'status': TableStatus.readyFases,
           'dataObjects': matchesJson,
           'utils': rodada,
         };
