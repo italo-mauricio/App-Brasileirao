@@ -271,6 +271,7 @@ class DataService {
       try {
         var chavesString =
             await http.read(recPartidasCopa, headers: {'Authorization': key});
+        String fase = jsonDecode(chavesString)["nome"];
         List chavesProntas = jsonDecode(chavesString)["chaves"].map((busca) {
           return {
             'pote': busca["nome"],
@@ -297,7 +298,8 @@ class DataService {
 
         tableStateNotifier.value = {
           'status': TableStatus.readyPhase,
-          'dataObjects': chavesProntas
+          'dataObjects': chavesProntas,
+          'fase': fase
         };
       } catch (e) {
         print(e);
@@ -317,24 +319,25 @@ class DataService {
     try {
       var chavesString =
           await http.read(recPartidasCopa, headers: {'Authorization': key});
+      String fase = jsonDecode(chavesString)["nome"];
       List chavesProntas = jsonDecode(chavesString)["chaves"].map((busca) {
         return {
           'pote': busca["nome"],
           'idIda': busca["partida_ida"]["partida_id"],
           'idVolta': busca["partida_volta"]["partida_id"],
-          
+          //
           'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
           'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
           'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
           'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
-
+          //
           'placarIda': busca["partida_ida"]["placar"],
           'statusIda': busca["partida_ida"]["status"],
           'dataIda': busca["partida_ida"]["data_realizacao"] ??
               "Indisponivel no momento",
           'horarioIda': busca["partida_ida"]["hora_realizacao"] ??
               "Indisponivel no momento",
-          
+          //
           'placarVolta': busca["partida_volta"]["placar"],
           'statusVolta': busca["partida_volta"]["status"],
           'dataVolta': busca["partida_volta"]["data_realizacao"] ??
@@ -346,7 +349,8 @@ class DataService {
 
       tableStateNotifier.value = {
         'status': TableStatus.readyPhase,
-        'dataObjects': chavesProntas
+        'dataObjects': chavesProntas,
+        'fase': fase
       };
     } catch (e) {
       print(e);
