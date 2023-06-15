@@ -66,7 +66,7 @@ class _MatchesWidgetState extends State<MatchesWidget> {
             ),
           ),
           subtitle: selectedMatchIndex == index
-              ? Description(id: widget.jsonObjects[index]["partida"])
+              ? Description(id: widget.jsonObjects[index]["partida"], value: null,)
               : null,
         );
       },
