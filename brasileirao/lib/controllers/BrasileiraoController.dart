@@ -51,11 +51,10 @@ class DataService {
   }
 
   void partidaPosterior() {
-    rodada ++;
+    rodada++;
     _selectedPartidaId = -1;
     partidasR();
   }
-
 
   Future<void> partidas() async {
     var key = auths();
@@ -152,12 +151,12 @@ class DataService {
       var descriptionString =
           await http.read(recDescription, headers: {'Authorization': key});
       Map<String, dynamic> p = jsonDecode(descriptionString);
-        String local;
-         if (p["estadio"] != null) {
-             local = p["estadio"]["nome_popular"];
-         } else {
-           local = "Local Indefinido"; 
-         }
+      String local;
+      if (p["estadio"] != null) {
+        local = p["estadio"]["nome_popular"];
+      } else {
+        local = "Local Indefinido";
+      }
       final descriptionJson = {
         'partidaId': partidaId,
         'status': p["status"] ?? "Status Indefinido",
@@ -239,68 +238,63 @@ class DataService {
 
   Future<void> chaviamento() async {
     var key = auths();
-    var recFasesCopa = Uri(
+    var recFaseCopa = Uri(
       scheme: 'https',
       host: 'api.api-futebol.com.br',
-      path: 'v1/campeonatos/2/fases',
+      path: 'v1/campeonatos/2/',
     );
 
     try {
       var jsonString =
-          await http.read(recFasesCopa, headers: {'Authorization': key});
-      var tabelaJson = jsonDecode(jsonString);
+          await http.read(recFaseCopa, headers: {'Authorization': key});
+      var faseJson = jsonDecode(jsonString)["fase_atual"]["fase_id"];
+      print(faseJson);
 
-      // Acessa a lista de fases da Copa do Brasil
-      List<dynamic> fasesCopaBrasil = tabelaJson['fases'];
+      var recPartidasCopa = Uri(
+        scheme: 'https',
+        host: 'api.api-futebol.com.br',
+        path: 'v1/campeonatos/2/fases/$faseJson',
+      );
+      try {
+        var chavesString =
+            await http.read(recPartidasCopa, headers: {'Authorization': key});
+        var chavesProntas = jsonDecode(chavesString)["chaves"].map((busca) {
+          String estadioIda = "Local não informado";
+          String estadioVolta = "Local não informado";
+          if (busca["partida_ida"]["estadio"] != null) {
+            estadioIda = busca["partida_ida"]["estadio"]["nome_popular"];
+          } else if (busca["partida_volta"]["estadio"] != null) {
+            estadioVolta = busca["partida_volta"]["estadio"]["nome_popular"];
+          }
+          return {
+            'pote': busca["nome"],
+            'placarIda': busca["partida_ida"]["placar"],
+            'idIda': busca["partida_ida"]["partida_id"],
+            'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
+            'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
+            'statusIda': busca["partida_ida"]["status"],
+            'dataIda': busca["partida_ida"]["data_realizacao"] ?? "Indisponivel no momento",
+            'horarioIda': busca["partida_ida"]["hora_realizacao"] ?? "Indisponivel no momento",
+            'estadioIda': estadioIda,
+            'placarVolta': busca["partida_ida"]["placar"],
+            'idVolta': busca["partida_volta"]["partida_id"],
+            'escudo3': busca["partida_volta"]["time_mandante"]["escudo"],
+            'escudo4': busca["partida_volta"]["time_visitante"]["escudo"],
+            'statusVolta': busca["partida_volta"]["status"],
+            'dataVolta': busca["partida_volta"]["data_realizacao"] ?? "Indisponivel no momento",
+            'horarioVolta': busca["partida_volta"]["hora_realizacao"] ?? "Indisponivel no momento",
+            'estadioVolta': estadioVolta
+          };
+        });
 
-      // Cria uma lista de Map para armazenar as informações tratadas
-      List<Map<String, dynamic>> times = [];
-      fasesCopaBrasil.forEach((item) {
-        int faseId = item['fase_id'];
-        String nomePopular = item['nome_popular'];
-        String nome = item['nome'];
-        String temporada = item['edicao']['temporada'];
-        String slug = item['slug'];
-
-        // Acessa as informações dos confrontos
-        List<dynamic> confrontos = item['chaves'];
-        List<String> chaves =
-            confrontos.map<String>((confronto) => confronto['_link']).toList();
-
-        Map<String, dynamic> timeData = {
-          'fase_id': faseId.toString(),
-          'nome_popular': nomePopular,
-          'nome': nome,
-          'slug': slug,
-          'chaves': chaves
+        tableStateNotifier.value = {
+          'status': TableStatus.readyPhase,
+          'data': chavesProntas
         };
-        times.add(timeData);
-      });
-
-      List<String> columnNames = [
-        'Fase ID',
-        'Nome Popular',
-        'Nome',
-        'Temporada',
-        'Slug',
-        'Chaves'
-      ];
-
-      List<String> propertyNames = [
-        'fase_id',
-        'nome_popular',
-        'nome',
-        'temporada',
-        'slug',
-        'chaves'
-      ];
-
-      tableStateNotifier.value = {
-        'status': TableStatus.readyPhase,
-        'dataObjects': times,
-        'columnNames': columnNames,
-        'propertyNames': propertyNames,
-      };
+      } catch (e) {
+        print(e);
+        tableStateNotifier.value = {'status': TableStatus.error};
+      }
     } catch (e) {
       tableStateNotifier.value = {'status': TableStatus.error};
     }
