@@ -124,7 +124,7 @@ class MyBody extends StatelessWidget {
                         onPressed: (() {
                           dataService.partidaAnteriorCup();
                         })),
-                    const Text("Rodada:",
+                    Text(value['fase'],
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                     IconButton(
