@@ -258,38 +258,32 @@ class DataService {
       try {
         var chavesString =
             await http.read(recPartidasCopa, headers: {'Authorization': key});
-        var chavesProntas = jsonDecode(chavesString)["chaves"].map((busca) {
-          String estadioIda = "Local não informado";
-          String estadioVolta = "Local não informado";
-          if (busca["partida_ida"]["estadio"] != null) {
-            estadioIda = busca["partida_ida"]["estadio"]["nome_popular"];
-          } else if (busca["partida_volta"]["estadio"] != null) {
-            estadioVolta = busca["partida_volta"]["estadio"]["nome_popular"];
-          }
+        List chavesProntas = jsonDecode(chavesString)["chaves"].map((busca) {
           return {
             'pote': busca["nome"],
-            'placarIda': busca["partida_ida"]["placar"],
             'idIda': busca["partida_ida"]["partida_id"],
+            'idVolta': busca["partida_volta"]["partida_id"],
+            
             'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
+            'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
             'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
+            'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
+ 
+            'placarIda': busca["partida_ida"]["placar"],
             'statusIda': busca["partida_ida"]["status"],
             'dataIda': busca["partida_ida"]["data_realizacao"] ?? "Indisponivel no momento",
             'horarioIda': busca["partida_ida"]["hora_realizacao"] ?? "Indisponivel no momento",
-            'estadioIda': estadioIda,
-            'placarVolta': busca["partida_ida"]["placar"],
-            'idVolta': busca["partida_volta"]["partida_id"],
-            'escudo3': busca["partida_volta"]["time_mandante"]["escudo"],
-            'escudo4': busca["partida_volta"]["time_visitante"]["escudo"],
+
+            'placarVolta': busca["partida_volta"]["placar"],
             'statusVolta': busca["partida_volta"]["status"],
             'dataVolta': busca["partida_volta"]["data_realizacao"] ?? "Indisponivel no momento",
             'horarioVolta': busca["partida_volta"]["hora_realizacao"] ?? "Indisponivel no momento",
-            'estadioVolta': estadioVolta
           };
-        });
+        }).toList();
 
         tableStateNotifier.value = {
           'status': TableStatus.readyPhase,
-          'data': chavesProntas
+          'dataObjects': chavesProntas
         };
       } catch (e) {
         print(e);
