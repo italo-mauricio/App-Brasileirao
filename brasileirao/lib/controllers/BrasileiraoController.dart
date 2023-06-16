@@ -2,8 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../sections/ChaviamentoCopa.dart';
-import 'package:brasileirao/sections/Table.dart';
 import '../utils/keysAuth.dart';
 
 enum TableStatus {
@@ -11,6 +9,7 @@ enum TableStatus {
   loading,
   ready,
   readyTable,
+  readyFases,
   readyRound,
   readyPlayers,
   readyMatches,
@@ -40,42 +39,58 @@ class DataService {
   get selectedPartidaId => _selectedPartidaId;
 
   void chamarApi(index) {
-    final requisicoes = [tabela, partidas, chaviamento, print];
+    final requisicoes = [tabela, partidas, chaviamento, fasesCopa];
     tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
   }
 
   void partidaAnterior() {
-    if (rodada > 1) {
     rodada--;
     _selectedPartidaId = -1;
     partidasR();
-    }
   }
 
   void partidaPosterior() {
-    if (rodada < 38) {  
     rodada++;
     _selectedPartidaId = -1;
     partidasR();
-    }
   }
 
   void partidaAnteriorCup() {
-    if (rodadaCup > 312) {  
-    rodadaCup--;
-    _selectedPartidaId = -1;
+  rodadaCup--;
+  _selectedPartidaId = -1;
+  if (rodadaCup < 312) {
+    rodadaCup = 314;
+  }
     chaveamentoR();
-    }
   }
 
   void partidaPosteriorCup() {
-    if (rodadaCup > 314) {
-    rodadaCup++;
-    _selectedPartidaId = -1;
-    chaveamentoR();
-    }
+  rodadaCup++;
+  _selectedPartidaId = -1;
+  if (rodadaCup > 314) {
+    rodadaCup = 312;
   }
+    chaveamentoR();
+  }
+
+void fasesAnteriorCup() {
+  rodadaCup--;
+  _selectedPartidaId = -1;
+  if (rodadaCup < 310) {
+    rodadaCup = 314;
+  }
+  fasesCopaR();
+}
+
+void fasesPosteriorCup() {
+  rodadaCup++;
+  _selectedPartidaId = -1;
+  if (rodadaCup > 314) {
+    rodadaCup = 310;
+  }
+  fasesCopaR();
+}
 
   var key = auths();
 
@@ -259,6 +274,7 @@ class DataService {
     }
   }
 
+
   Future<void> chaviamento() async {
     var recFaseCopa = Uri(
       scheme: 'https',
@@ -358,6 +374,90 @@ class DataService {
       tableStateNotifier.value = {
         'status': TableStatus.readyPhase,
         'dataObjects': chavesProntas,
+        'fase': fase
+      };
+    } catch (e) {
+      print(e);
+      tableStateNotifier.value = {'status': TableStatus.error};
+    }
+  }
+
+  Future<void> fasesCopa() async {
+    var recFaseCopa = Uri(
+      scheme: 'https',
+      host: 'api.api-futebol.com.br',
+      path: 'v1/campeonatos/2/',
+    );
+
+    try {
+      var jsonString =
+          await http.read(recFaseCopa, headers: {'Authorization': key});
+      rodadaCup = jsonDecode(jsonString)["fase_atual"]["fase_id"];
+
+      var recPartidasCopa = Uri(
+        scheme: 'https',
+        host: 'api.api-futebol.com.br',
+        path: 'v1/campeonatos/2/fases/$rodadaCup',
+      );
+      try {
+        var chavesString =
+            await http.read(recPartidasCopa, headers: {'Authorization': key});
+        String fase = jsonDecode(chavesString)["nome"];
+        List chavesProntas = jsonDecode(chavesString)["chaves"].map((busca) {
+          return {
+            'pote': busca["nome"],
+            'idIda': busca["partida_ida"]["partida_id"],
+            'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
+            'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
+            'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
+            'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
+          };
+        }).toList();
+
+        tableStateNotifier.value = {
+          'status': TableStatus.readyFases,
+          'dataObjects': chavesProntas,
+          'fase': fase
+        };
+      } catch (e) {
+        print(e);
+        tableStateNotifier.value = {'status': TableStatus.error};
+      }
+    } catch (e) {
+      print("Qual é mané");
+      print(e);
+      tableStateNotifier.value = {'status': TableStatus.error};
+    }
+  }
+
+
+    Future<void> fasesCopaR() async {
+    var recPartidasCopa = Uri(
+      scheme: 'https',
+      host: 'api.api-futebol.com.br',
+      path: 'v1/campeonatos/2/fases/$rodadaCup',
+    );
+    try {
+      var fasesString =
+          await http.read(recPartidasCopa, headers: {'Authorization': key});
+      String fase = jsonDecode(fasesString)["nome"];
+      List fasesProntas = jsonDecode(fasesString)["chaves"].map((busca) {
+        return {
+          'pote': busca["nome"],
+          'idIda': busca["partida_ida"]["partida_id"],
+          //
+          'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
+          'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
+          'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
+          'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
+          //
+
+        };
+      }).toList();
+
+      tableStateNotifier.value = {
+        'status': TableStatus.readyFases,
+        'dataObjects': fasesProntas,
         'fase': fase
       };
     } catch (e) {
