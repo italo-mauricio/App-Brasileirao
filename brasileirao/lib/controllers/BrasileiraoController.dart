@@ -77,7 +77,7 @@ class DataService {
 void fasesAnteriorCup() {
   rodadaCup--;
   _selectedPartidaId = -1;
-  if (rodadaCup < 312) {
+  if (rodadaCup < 310) {
     rodadaCup = 314;
   }
   fasesCopaR();
@@ -87,7 +87,7 @@ void fasesPosteriorCup() {
   rodadaCup++;
   _selectedPartidaId = -1;
   if (rodadaCup > 314) {
-    rodadaCup = 312;
+    rodadaCup = 310;
   }
   fasesCopaR();
 }
