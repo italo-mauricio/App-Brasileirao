@@ -411,9 +411,6 @@ void fasesPosteriorCup() {
             'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
             'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
             'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
-
-
-
           };
         }).toList();
 

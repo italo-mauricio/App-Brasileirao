@@ -19,7 +19,7 @@ class AppWidget extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      initialRoute: '/home',
+      initialRoute: '/',
       routes: {
         '/': (context) => const LoginPage(),
         '/home': (context) => MyApp(logoutCallback: () => logoutCallback(context)),
