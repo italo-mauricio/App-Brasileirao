@@ -60,28 +60,40 @@ class DataService {
   }
 
   void partidaAnteriorCup() {
-    rodadaCup--;
-    _selectedPartidaId = -1;
+  rodadaCup--;
+  _selectedPartidaId = -1;
+  if (rodadaCup < 312) {
+    rodadaCup = 314;
+  }
     chaveamentoR();
   }
 
   void partidaPosteriorCup() {
-    rodadaCup++;
-    _selectedPartidaId = -1;
+  rodadaCup++;
+  _selectedPartidaId = -1;
+  if (rodadaCup > 314) {
+    rodadaCup = 312;
+  }
     chaveamentoR();
   }
 
-    void fasesAnteriorCup() {
-    rodadaCup--;
-    _selectedPartidaId = -1;
-    FasesCopaR();
+void fasesAnteriorCup() {
+  rodadaCup--;
+  _selectedPartidaId = -1;
+  if (rodadaCup < 312) {
+    rodadaCup = 314;
   }
+  FasesCopaR();
+}
 
-  void fasesPosteriorCup() {
-    rodadaCup++;
-    _selectedPartidaId = -1;
-    FasesCopaR();
+void fasesPosteriorCup() {
+  rodadaCup++;
+  _selectedPartidaId = -1;
+  if (rodadaCup > 314) {
+    rodadaCup = 312;
   }
+  FasesCopaR();
+}
 
   var key = auths();
 
@@ -427,6 +439,8 @@ class DataService {
         tableStateNotifier.value = {'status': TableStatus.error};
       }
     } catch (e) {
+      print("Qual é mané");
+      print(e);
       tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
@@ -462,7 +476,7 @@ class DataService {
       }).toList();
 
       tableStateNotifier.value = {
-        'status': TableStatus.readyPhase,
+        'status': TableStatus.readyFases,
         'dataObjects': fasesProntas,
         'fase': fase
       };
