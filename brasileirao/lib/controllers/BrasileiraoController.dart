@@ -468,7 +468,6 @@ void fasesPosteriorCup() {
       tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
-
 }
 
 final dataService = DataService();
