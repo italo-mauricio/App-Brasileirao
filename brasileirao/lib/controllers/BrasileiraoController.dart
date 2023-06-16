@@ -2,9 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../sections/ChaviamentoCopa.dart';
-import '../sections/fasesCopa.dart';
-import 'package:brasileirao/sections/Table.dart';
 import '../utils/keysAuth.dart';
 
 enum TableStatus {
@@ -385,9 +382,6 @@ void fasesPosteriorCup() {
     }
   }
 
-
-
-
   Future<void> fasesCopa() async {
     var recFaseCopa = Uri(
       scheme: 'https',
@@ -444,7 +438,7 @@ void fasesPosteriorCup() {
       tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
-
+  
 
     Future<void> FasesCopaR() async {
     var recPartidasCopa = Uri(
