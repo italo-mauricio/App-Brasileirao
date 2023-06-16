@@ -2,6 +2,7 @@ import 'package:brasileirao/sections/Table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../components/Drawer.dart';
+import '../sections/fasesCopa.dart';
 import '../controllers/BrasileiraoController.dart';
 import 'package:brasileirao/sections/Matches.dart';
 import 'package:brasileirao/assets/Fontes.dart';
@@ -138,6 +139,35 @@ class MyBody extends StatelessWidget {
                 ),
               ),
               Expanded(child: PartidasCopa(jsonObjects: value['dataObjects']))
+            ]);
+
+          case TableStatus.readyFases:
+            return Column(children: [
+              SizedBox(
+                height: 40,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                        iconSize: 30,
+                        icon: const Icon(Icons.chevron_left_sharp),
+                        onPressed: (() {
+                          dataService.fasesAnteriorCup();
+                        })),
+                    Text(value['fase'],
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    IconButton(
+                      iconSize: 30,
+                      icon: const Icon(Icons.chevron_right_sharp),
+                      onPressed: (() {
+                        dataService.fasesPosteriorCup();
+                      }),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(child: FasesCopa(jsonObjects: value['dataObjects']))
             ]);
           case TableStatus.error:
             return const Center(

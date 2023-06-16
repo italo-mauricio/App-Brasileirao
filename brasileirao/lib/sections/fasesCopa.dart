@@ -1,75 +1,89 @@
+import 'package:brasileirao/controllers/BrasileiraoController.dart';
 import 'package:flutter/material.dart';
+
 import 'DescriptionsMatches.dart';
 
-class MatchesWidget extends StatefulWidget {
+class FasesCopa extends StatelessWidget {
   final List jsonObjects;
-  
-  MatchesWidget({Key? key, required this.jsonObjects}) : super(key: key);
 
-  @override
-  _MatchesWidgetState createState() => _MatchesWidgetState();
-}
-
-class _MatchesWidgetState extends State<MatchesWidget> {
-  int selectedMatchIndex = -1;
+  FasesCopa({super.key, required this.jsonObjects});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: widget.jsonObjects.length,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          onTap: () {
-            setState(() {
-              selectedMatchIndex = index;
-            });
-          },
-          title: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  children: [
-                    Image.network(
-                      widget.jsonObjects[index]["time_mandante"],
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.contain,
+        itemCount: jsonObjects.length,
+        itemBuilder: (BuildContext context, int index) {
+          final idIda = jsonObjects[index]["idIda"];
+          // final idVolta = jsonObjects[index]["idVolta"];
+          return Column(
+            children: [
+              ListTile(
+
+                  title: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Image.network(jsonObjects[index]["escudo1"],
+                                width: 50, height: 50, fit: BoxFit.contain),
+                            Text(jsonObjects[index]["sigla1"])
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Image.network(jsonObjects[index]["escudo2"],
+                                width: 50, height: 50, fit: BoxFit.contain),
+                            Text(jsonObjects[index]["sigla2"])
+                          ],
+                        )
+                      ],
                     ),
-                    Text(widget.jsonObjects[index]["sigla_mandante"]),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      widget.jsonObjects[index]["placar"],
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    Text(widget.jsonObjects[index]["data"] +
-                        " " +
-                        widget.jsonObjects[index]["hora"]),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Image.network(
-                      widget.jsonObjects[index]["time_visitante"],
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.contain,
-                    ),
-                    Text(widget.jsonObjects[index]["sigla_visitante"]),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          subtitle: selectedMatchIndex == index
-              ? Description(id: widget.jsonObjects[index]["partida"], value: null,)
-              : null,
-        );
-      },
-    );
+                    // ),
+                  ),
+                  subtitle: ValueListenableBuilder(
+              valueListenable: dataService.descriptionNotifier,
+              builder: (context, value, child) =>
+                  Description(id: idIda, value: value)),
+                  ),
+              // ListTile(
+              //     title: Padding(
+              //       padding: const EdgeInsets.all(0.0),
+              //       child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Column(
+              //             children: [
+              //               Image.network(jsonObjects[index]["escudo2"],
+              //                   width: 50, height: 50, fit: BoxFit.contain),
+              //               Text(jsonObjects[index]["sigla2"])
+              //             ],
+              //           ),
+              //           Column(
+              //             children: [
+              //               Image.network(jsonObjects[index]["escudo1"],
+              //                   width: 50, height: 50, fit: BoxFit.contain),
+              //               Text(jsonObjects[index]["sigla1"])
+              //             ],
+              //           )
+              //         ],
+              //       ),
+              //     ),
+              //     subtitle: ValueListenableBuilder(
+              // valueListenable: dataService.descriptionNotifier,
+              // builder: (context, value, child) =>
+              //     Description(id: idVolta, value: value)),
+              //     ),
+              const Divider(
+                height: 20,
+                color: Colors.green,
+                thickness: 1,
+                indent: 20,
+                endIndent: 20,
+              )
+            ],
+          );
+        });
   }
 }

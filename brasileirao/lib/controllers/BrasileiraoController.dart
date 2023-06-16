@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../sections/ChaviamentoCopa.dart';
+import '../sections/fasesCopa.dart';
 import 'package:brasileirao/sections/Table.dart';
 import '../utils/keysAuth.dart';
 
@@ -41,7 +42,7 @@ class DataService {
   get selectedPartidaId => _selectedPartidaId;
 
   void chamarApi(index) {
-    final requisicoes = [tabela, partidas, print, fasesCopa];
+    final requisicoes = [tabela, partidas, chaviamento, fasesCopa];
     tableStateNotifier.value = {'status': TableStatus.loading};
     requisicoes[index]();
   }
@@ -68,6 +69,18 @@ class DataService {
     rodadaCup++;
     _selectedPartidaId = -1;
     chaveamentoR();
+  }
+
+    void fasesAnteriorCup() {
+    rodadaCup--;
+    _selectedPartidaId = -1;
+    FasesCopaR();
+  }
+
+  void fasesPosteriorCup() {
+    rodadaCup++;
+    _selectedPartidaId = -1;
+    FasesCopaR();
   }
 
   var key = auths();
@@ -363,41 +376,97 @@ class DataService {
 
 
 
-    Future<void> fasesCopa() async {
-    var key = auths();
-
-    var recFasesCopa = Uri(
-        scheme: 'https',
-        host: 'api.api-futebol.com.br',
-        path: 'v1/campeonatos/2/fases');
+  Future<void> fasesCopa() async {
+    var recFaseCopa = Uri(
+      scheme: 'https',
+      host: 'api.api-futebol.com.br',
+      path: 'v1/campeonatos/2/',
+    );
 
     try {
       var jsonString =
-          await http.read(recFasesCopa, headers: {'Authorization': key});
-      dynamic partidasJson = jsonDecode(jsonString);
-      int fase = partidasJson["fase_atual"]["fase_id"];
+          await http.read(recFaseCopa, headers: {'Authorization': key});
+      rodadaCup = jsonDecode(jsonString)["fase_atual"]["fase_id"];
 
-      var recFasesCopa2 = Uri(
-          scheme: 'https',
-          host: 'api.api-futebol.com.br',
-          path: 'v1/campeonatos/2/fases/$fase');
+      var recPartidasCopa = Uri(
+        scheme: 'https',
+        host: 'api.api-futebol.com.br',
+        path: 'v1/campeonatos/2/fases/$rodadaCup',
+      );
       try {
-        var matchesString =
-            await http.read(recFasesCopa2, headers: {'Authorization': key});
-        var matchesJson = jsonDecode(matchesString)["edicao"];
-        print(matchesJson);
+        var chavesString =
+            await http.read(recPartidasCopa, headers: {'Authorization': key});
+        String fase = jsonDecode(chavesString)["nome"];
+        List chavesProntas = jsonDecode(chavesString)["chaves"].map((busca) {
+          return {
+            'pote': busca["nome"],
+            'idIda': busca["partida_ida"]["partida_id"],
+            'idVolta': busca["partida_volta"]["partida_id"],
+            'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
+            'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
+            'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
+            'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
+            'statusIda': busca["partida_ida"]["status"],
+            'dataIda': busca["partida_ida"]["data_realizacao"] ??
+                "Indisponivel no momento",
+            'horarioIda': busca["partida_ida"]["hora_realizacao"] ??
+                "Indisponivel no momento",
+            'placarVolta': busca["partida_volta"]["placar"],
+            'statusVolta': busca["partida_volta"]["status"],
+
+          };
+        }).toList();
+
         tableStateNotifier.value = {
           'status': TableStatus.readyFases,
-          'dataObjects': matchesJson,
-          'utils': rodada,
+          'dataObjects': chavesProntas,
+          'fase': fase
         };
       } catch (e) {
-        print("oia jegue");
         print(e);
         tableStateNotifier.value = {'status': TableStatus.error};
       }
     } catch (e) {
-      print("oia jumento");
+      tableStateNotifier.value = {'status': TableStatus.error};
+    }
+  }
+
+
+    Future<void> FasesCopaR() async {
+    var recPartidasCopa = Uri(
+      scheme: 'https',
+      host: 'api.api-futebol.com.br',
+      path: 'v1/campeonatos/2/fases/$rodadaCup',
+    );
+    try {
+      var fasesString =
+          await http.read(recPartidasCopa, headers: {'Authorization': key});
+      String fase = jsonDecode(fasesString)["nome"];
+      List fasesProntas = jsonDecode(fasesString)["chaves"].map((busca) {
+        return {
+          'pote': busca["nome"],
+          'idIda': busca["partida_ida"]["partida_id"],
+          'idVolta': busca["partida_volta"]["partida_id"],
+          //
+          'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
+          'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
+          'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
+          'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
+          //
+          'placarIda': busca["partida_ida"]["placar"],
+          'statusIda': busca["partida_ida"]["status"],
+          //
+          'placarVolta': busca["partida_volta"]["placar"],
+          'statusVolta': busca["partida_volta"]["status"],
+        };
+      }).toList();
+
+      tableStateNotifier.value = {
+        'status': TableStatus.readyPhase,
+        'dataObjects': fasesProntas,
+        'fase': fase
+      };
+    } catch (e) {
       print(e);
       tableStateNotifier.value = {'status': TableStatus.error};
     }
