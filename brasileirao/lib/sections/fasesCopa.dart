@@ -14,7 +14,6 @@ class FasesCopa extends StatelessWidget {
         itemCount: jsonObjects.length,
         itemBuilder: (BuildContext context, int index) {
           final idIda = jsonObjects[index]["idIda"];
-          // final idVolta = jsonObjects[index]["idVolta"];
           return Column(
             children: [
               ListTile(
@@ -47,34 +46,6 @@ class FasesCopa extends StatelessWidget {
               builder: (context, value, child) =>
                   Description(id: idIda, value: value)),
                   ),
-              // ListTile(
-              //     title: Padding(
-              //       padding: const EdgeInsets.all(0.0),
-              //       child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Column(
-              //             children: [
-              //               Image.network(jsonObjects[index]["escudo2"],
-              //                   width: 50, height: 50, fit: BoxFit.contain),
-              //               Text(jsonObjects[index]["sigla2"])
-              //             ],
-              //           ),
-              //           Column(
-              //             children: [
-              //               Image.network(jsonObjects[index]["escudo1"],
-              //                   width: 50, height: 50, fit: BoxFit.contain),
-              //               Text(jsonObjects[index]["sigla1"])
-              //             ],
-              //           )
-              //         ],
-              //       ),
-              //     ),
-              //     subtitle: ValueListenableBuilder(
-              // valueListenable: dataService.descriptionNotifier,
-              // builder: (context, value, child) =>
-              //     Description(id: idVolta, value: value)),
-              //     ),
               const Divider(
                 height: 20,
                 color: Colors.green,

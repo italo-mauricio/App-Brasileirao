@@ -80,7 +80,7 @@ void fasesAnteriorCup() {
   if (rodadaCup < 312) {
     rodadaCup = 314;
   }
-  FasesCopaR();
+  fasesCopaR();
 }
 
 void fasesPosteriorCup() {
@@ -89,7 +89,7 @@ void fasesPosteriorCup() {
   if (rodadaCup > 314) {
     rodadaCup = 312;
   }
-  FasesCopaR();
+  fasesCopaR();
 }
 
   var key = auths();
@@ -407,18 +407,12 @@ void fasesPosteriorCup() {
           return {
             'pote': busca["nome"],
             'idIda': busca["partida_ida"]["partida_id"],
-            'idVolta': busca["partida_volta"]["partida_id"],
             'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
             'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
             'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
             'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
-            'statusIda': busca["partida_ida"]["status"],
-            'dataIda': busca["partida_ida"]["data_realizacao"] ??
-                "Indisponivel no momento",
-            'horarioIda': busca["partida_ida"]["hora_realizacao"] ??
-                "Indisponivel no momento",
-            'placarVolta': busca["partida_volta"]["placar"],
-            'statusVolta': busca["partida_volta"]["status"],
+
+
 
           };
         }).toList();
@@ -438,9 +432,9 @@ void fasesPosteriorCup() {
       tableStateNotifier.value = {'status': TableStatus.error};
     }
   }
-  
 
-    Future<void> FasesCopaR() async {
+
+    Future<void> fasesCopaR() async {
     var recPartidasCopa = Uri(
       scheme: 'https',
       host: 'api.api-futebol.com.br',
@@ -454,18 +448,13 @@ void fasesPosteriorCup() {
         return {
           'pote': busca["nome"],
           'idIda': busca["partida_ida"]["partida_id"],
-          'idVolta': busca["partida_volta"]["partida_id"],
           //
           'escudo1': busca["partida_ida"]["time_mandante"]["escudo"],
           'sigla1': busca["partida_ida"]["time_mandante"]["sigla"],
           'escudo2': busca["partida_ida"]["time_visitante"]["escudo"],
           'sigla2': busca["partida_ida"]["time_visitante"]["sigla"],
           //
-          'placarIda': busca["partida_ida"]["placar"],
-          'statusIda': busca["partida_ida"]["status"],
-          //
-          'placarVolta': busca["partida_volta"]["placar"],
-          'statusVolta': busca["partida_volta"]["status"],
+
         };
       }).toList();
 
